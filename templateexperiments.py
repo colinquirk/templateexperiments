@@ -40,8 +40,9 @@ class BaseExperiment(object):
         self.monitor_distance = monitor_distance
 
         self.experiment_data = []
+        self.experiment_data_filename = None
+        self.data_lines_written = 0
         self.experiment_info = {}
-        self.experiment_info_file = None
         self.experiment_window = None
 
         self.experiment_monitor = psychopy.monitors.Monitor(
@@ -167,6 +168,8 @@ class BaseExperiment(object):
         if data_filename is None:
             data_filename = (self.experiment_name + '_' +
                              self.experiment_info['Subject Number'].zfill(3))
+        elif data_filename[-4:] == '.csv':
+            data_filename = data_filename[:-4]
 
         if os.path.isfile(data_filename + '.csv'):
             if not self.__confirm_overwrite():
@@ -177,7 +180,15 @@ class BaseExperiment(object):
                     new_filename = data_filename + '(' + str(i) + ')'
                 data_filename = new_filename
 
-        self.experiment_info_file = open(data_filename + '.csv', 'w+')
+        self.experiment_data_filename = data_filename + '.csv'
+
+        # Write the header
+        with open(self.experiment_data_filename, 'w+') as data_file:
+            for field in self.data_fields:
+                data_file.write(field)
+                if field != self.data_fields[-1]:
+                    data_file.write(',')
+            data_file.write('\n')
 
     def open_window(self):
         """Opens the psychopy window."""
@@ -191,7 +202,18 @@ class BaseExperiment(object):
         self.experiment_window.close()
 
     def save_data_to_csv(self):
-        pass
+        with open(self.experiment_data_filename, 'a') as data_file:
+            for trial in range(
+                    self.data_lines_written, len(self.experiment_data)):
+                for field in self.data_fields:
+                    try:
+                        data_file.write(
+                            str(self.experiment_data[trial][field]))
+                    except KeyError:
+                        data_file.write('NA')
+                    if field != self.data_fields[-1]:
+                        data_file.write(',')
+                data_file.write('\n')
 
     def save_experiment_info(self):
         filename = self.experiment_name + '_info.txt'
@@ -201,25 +223,42 @@ class BaseExperiment(object):
             info_file.write('\n')
 
     def save_experiment_pickle(self):
-        pass
+        pickle.dump(self.experiment_data, open(
+            self.experiment_name + '_' +
+            self.experiment_info['Subject Number'].zfill(3) + '.pickle',
+            'wb+'))
 
     def update_experiment_data(self, new_data):
-        """Attaches any new data to the experiment_data list.
+        """Extends any new data to the experiment_data list.
 
         Parameters:
         new_data -- A list of dictionaries that are extended to
-            experiment_data. Only keys that are included in data_fields are
-            extended.
+            experiment_data. Only keys that are included in data_fields should
+            be included, as only those will be written in save_data_to_csv()
         """
-        pass
+
+        self.experiment_data.extend(new_data)
 
 
 # "tests"
-MyExperiment = BaseExperiment('MyExperiment', [])
-MyExperiment.get_experiment_info_from_dialog(additional_fields_dict={'t': ''})
+MyExperiment = BaseExperiment('MyExperiment', ['block', 'trial'])
+MyExperiment.get_experiment_info_from_dialog()
 MyExperiment.save_experiment_info()
 MyExperiment.open_csv_data_file(data_filename="test_file")
 MyExperiment.open_window()
+MyExperiment.update_experiment_data([{'block': 1, 'trial': 1},
+                                     {'block': 1, 'trial': 2},
+                                     {'block': 2, 'trial': 1},
+                                     {'block': 2, 'trial': 2}
+                                     ])
+MyExperiment.save_data_to_csv()
+MyExperiment.update_experiment_data([{'block': 3, 'trial': 1},
+                                     {'block': 3, 'trial': 2},
+                                     {'block': 4, 'trial': 1},
+                                     {'block': 4, 'trial': 2}
+                                     ])
+MyExperiment.save_data_to_csv()
+MyExperiment.save_experiment_pickle()
 time.sleep(.3)
 MyExperiment.display_text_screen(
     text="Success!", bg_color=[220, 255, 220])
