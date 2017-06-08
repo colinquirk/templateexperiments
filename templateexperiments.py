@@ -68,10 +68,10 @@ class BaseExperiment(object):
 
     @staticmethod
     def __confirm_overwrite():
-        """Private method that shows a dialog asking if a file can be
+        """Private, static method that shows a dialog asking if a file can be
         overwritten.
 
-        Returns a bool describing if the should be overwritten.
+        Returns a bool describing if the file should be overwritten.
         """
 
         overwrite_dlg = psychopy.gui.Dlg(
@@ -80,16 +80,11 @@ class BaseExperiment(object):
         overwrite_dlg.addText('File already exists. Overwrite?')
         overwrite_dlg.show()
 
-        if overwrite_dlg.OK:
-            return True
-        else:
-            return False
+        return overwrite_dlg.OK
 
     @staticmethod
     def convert_color_value(color):
         """Converts a list of 3 values from 0 to 255 to -1 to 1.
-
-        Note that middle grey will be slightly off.
 
         Parameters:
         color -- A list of 3 ints between 0 and 255 to be converted.
@@ -137,10 +132,12 @@ class BaseExperiment(object):
         )
 
     def save_experiment_info(self):
-        """Appends the info from the dialog box to a txt file containing
-        everything about participants run with the same study name.
+        """Writes the info from the dialog box to a text file.
         """
-        filename = self.experiment_name + '_info.txt'
+        filename = (self.experiment_name + '_' +
+                    self.experiment_info['Subject Number'].zfill(3) +
+                    '_info.txt')
+
         with open(filename, 'a') as info_file:
             for key, value in self.experiment_info.iteritems():
                 info_file.write(key + ':' + value + '\n')
@@ -162,6 +159,7 @@ class BaseExperiment(object):
 
         if os.path.isfile(data_filename + '.csv'):
             if not self.__confirm_overwrite():
+                # If the file exists and we can't overwrite make a new filename
                 i = 1
                 new_filename = data_filename + '(' + str(i) + ')'
                 while os.path.isfile(new_filename + '.csv'):
@@ -297,9 +295,28 @@ class BaseExperiment(object):
         self.experiment_window.flip()
 
         if wait_for_input:
-            time.sleep(.5)  # Prevents accidental key presses
+            time.sleep(.2)  # Prevents accidental key presses
             psychopy.event.waitKeys()
 
     def quit_experiment(self):
         """Completes anything that must occur when the experiment ends."""
         self.experiment_window.close()
+
+
+class EEGExperiment(BaseExperiment):
+    """This is an EEG experiment."""
+    def __init__(self):
+        pass
+
+
+class EyeTrackingExperiment(BaseExperiment):
+    """This is an eye tracking experiment."""
+    def __init__(self):
+        pass
+
+
+class EEGandEyeTrackingExperiment(EEGExperiment, EyeTrackingExperiment):
+    """This is just inherits from EEGExperiment and EyeTrackingExperiment,
+    for convinence.
+    """
+    pass
