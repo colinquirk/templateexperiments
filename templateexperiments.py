@@ -1,4 +1,33 @@
-"""Contains all basic experiment classes."""
+"""Basic experiment classes that are designed to be extended.
+
+Author - Colin Quirk (cquirk@uchicago.edu)
+
+Repo: https://github.com/colinquirk/templateexperiments
+
+These classes provide basic utility functions that are needed by all
+experiments of their type. Specific experiment classes should inherit from
+the correct class and extend/overwrite as needed.
+
+Note for other experimenters -- My experiments all inherit from these classes,
+so changes in these functions may result in unexpected changes elsewhere. If
+possible, changes to experiments should be made in the specific experiment
+class by overwriting template experiment methods. Ideally, the only changes
+that should be made to these classes are those that would need to be made for
+every experiment of mine (e.g. to correct for system differences). Even those
+types of changes may have unintended consequences so please be careful! If you
+need help using this module, have requests or improvements, or found this code
+useful please let me know through email or GitHub.
+
+BaseExperiment -- All experiments inherit from BaseExperiment. Provides basic
+    functionality needed by all experiments. See help(BaseExperiment)
+EEGExperiment -- Provides methods related to EEG recording.
+    See help(EEGExperiment)
+EyeTrackingExperiment -- Provides methods related to eye tracking.
+    See help(EyeTrackingExperiment)
+EEGandEyeTrackingExperiment -- convinence class that inherits EEG and eye
+    tracking methods. See the help for the other classes for their parameters
+    and methods.
+"""
 
 from __future__ import division
 
@@ -12,22 +41,29 @@ import psychopy.visual
 
 
 class BaseExperiment(object):
-    """This is the BaseExperiment class
+    """Basic experiment class providing functionality in all experiments
+
     Parameters:
-    experiment_name -- A string for the experiment title that also defines
-        the filename the experiment info from the dialog box is saved to.
-    data_fields -- list of strings containing the data fields to be stored
-    bg_color -- A list of 3 values between 0 and 255 defining the
-        background color.
-    monitor_name -- The name of the monitor to be used
-        Psychpy will search for the provided name to see if it was defined
-        in monitor center. If it is not defined, a temporary monitor will
-        be created.
-    monitor_width -- An int describing the length of the display monitor
-        in cm (default 53).
-    monitor_distance -- An int describing the distance the participant sits
-        from the monitor in cm (default 70).
+    experiment_name -- string defining the experiment title
+    data_fields -- list of strings defining data fields
+    bg_color -- list of 3 values (0-255) defining the background color
+    monitor_name -- name of the monitor to be used
+    monitor_width -- int describing length of display monitor in cm
+    monitor_distance -- int describing participant distance from monitor in cm
+
+    Methods:
+    convert_color_value -- convert a list of 3 values from 0 to 255 to -1 to 1.
+    get_experiment_info_from_dialog -- gets subject info from a dialog box.
+    save_experiment_info -- write the info from the dialog box to a text file.
+    open_csv_data_file -- opens a csv data file and writes the header.
+    update_experiment_data -- extends any new data to the experiment_data list.
+    save_data_to_csv -- append new entries in experiment_data to csv data file.
+    save_experiment_pickle -- save a pickle so crashes can be recovered from.
+    open_window -- open a psychopy window.
+    display_text_screen -- draws a string centered on the screen.
+    quit_experiment -- ends the experiment.
     """
+
     def __init__(self, experiment_name, data_fields, bg_color=[128, 128, 128],
                  monitor_name="Experiment Monitor", monitor_width=53,
                  monitor_distance=70):
@@ -40,7 +76,7 @@ class BaseExperiment(object):
         bg_color -- A list of 3 values between 0 and 255 defining the
             background color.
         monitor_name -- The name of the monitor to be used
-            Psychpy will search for the provided name to see if it was defined
+            Psychopy will search for the provided name to see if it was defined
             in monitor center. If it is not defined, a temporary monitor will
             be created.
         monitor_width -- An int describing the length of the display monitor
@@ -106,6 +142,7 @@ class BaseExperiment(object):
         additional_fields_dict -- An optional dictionary containing more
             fields for the dialog box and output dictionary.
         """
+
         self.experiment_info = {'Subject Number': '0',
                                 'Age': '0',
                                 'Experimenter Initials': 'CQ',
@@ -132,8 +169,7 @@ class BaseExperiment(object):
         )
 
     def save_experiment_info(self):
-        """Writes the info from the dialog box to a text file.
-        """
+        """Writes the info from the dialog box to a text file."""
         filename = (self.experiment_name + '_' +
                     self.experiment_info['Subject Number'].zfill(3) +
                     '_info.txt')
@@ -196,6 +232,7 @@ class BaseExperiment(object):
 
         Update the experiment data to be written with update_experiment_data.
         """
+
         with open(self.experiment_data_filename, 'a') as data_file:
             for trial in range(
                     self.data_lines_written, len(self.experiment_data)):
@@ -247,7 +284,6 @@ class BaseExperiment(object):
 
     def open_window(self):
         """Opens the psychopy window."""
-
         self.experiment_window = psychopy.visual.Window(
             monitor=self.experiment_monitor, fullscr=True, color=self.bg_color,
             colorSpace='rgb', allowGUI=False, winType='pyglet', units='deg',
@@ -275,6 +311,7 @@ class BaseExperiment(object):
         wait_for_input -- Bool that defines whether the screen will wait for
             keyboard input before continuing.
         """
+
         if bg_color is None:
             bg_color = self.bg_color
         else:
@@ -304,19 +341,19 @@ class BaseExperiment(object):
 
 
 class EEGExperiment(BaseExperiment):
-    """This is an EEG experiment."""
+    """This is an EEG experiment class."""
     def __init__(self):
         pass
 
 
 class EyeTrackingExperiment(BaseExperiment):
-    """This is an eye tracking experiment."""
+    """This is an eye tracking experiment class."""
     def __init__(self):
         pass
 
 
 class EEGandEyeTrackingExperiment(EEGExperiment, EyeTrackingExperiment):
-    """This is just inherits from EEGExperiment and EyeTrackingExperiment,
+    """This is inherits from EEGExperiment and EyeTrackingExperiment,
     for convinence.
     """
     pass
