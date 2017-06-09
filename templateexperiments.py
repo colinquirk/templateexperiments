@@ -65,7 +65,7 @@ class BaseExperiment(object):
     """
 
     def __init__(self, experiment_name, data_fields, bg_color=[128, 128, 128],
-                 monitor_name="Experiment Monitor", monitor_width=53,
+                 monitor_name='Experiment Monitor', monitor_width=53,
                  monitor_distance=70):
         """Creates a new BaseExperiment object.
 
@@ -290,7 +290,7 @@ class BaseExperiment(object):
             screen=0)
 
     def display_text_screen(
-            self, text="", text_color=[0, 0, 0], text_height=36,
+            self, text='', text_color=[0, 0, 0], text_height=36,
             bg_color=None, wait_for_input=True):
         """Takes a string as input and draws it centered on the screen.
 
@@ -318,7 +318,7 @@ class BaseExperiment(object):
             bg_color = self.convert_color_value(bg_color)
 
         backgroundRect = psychopy.visual.Rect(
-            self.experiment_window, fillColor=bg_color, units="norm", width=2,
+            self.experiment_window, fillColor=bg_color, units='norm', width=2,
             height=2)
 
         text_color = self.convert_color_value(text_color)
