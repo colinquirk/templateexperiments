@@ -126,14 +126,7 @@ class BaseExperiment(object):
         color -- A list of 3 ints between 0 and 255 to be converted.
         """
 
-        new_color = []
-
-        for value in color:
-            new_value = (value/127.5)-1
-            new_value = round(new_value, 2)
-            new_color.append(new_value)
-
-        return new_color
+        return [round(((n/127.5)-1), 2) for n in color]
 
     def get_experiment_info_from_dialog(self, additional_fields_dict=None):
         """Gets subject info from dialog box.
