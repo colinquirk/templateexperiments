@@ -33,11 +33,8 @@ from __future__ import division
 
 import os
 import pickle
-import time
 
-import psychopy.gui
-import psychopy.monitors
-import psychopy.visual
+import psychopy
 
 
 class BaseExperiment(object):
@@ -302,7 +299,8 @@ class BaseExperiment(object):
         bg_color -- A list of 3 values between 0 and 255 (default is default
             background color).
         wait_for_input -- Bool that defines whether the screen will wait for
-            keyboard input before continuing.
+            keyboard input before continuing. If waiting for keys, a .5 second
+            buffer is added to prevent accidental advancing.
         """
 
         if bg_color is None:
@@ -325,7 +323,7 @@ class BaseExperiment(object):
         self.experiment_window.flip()
 
         if wait_for_input:
-            time.sleep(.2)  # Prevents accidental key presses
+            psychopy.core.wait(.5)  # Prevents accidental key presses
             psychopy.event.waitKeys()
 
     def quit_experiment(self):
