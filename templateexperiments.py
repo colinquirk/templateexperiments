@@ -51,6 +51,7 @@ class BaseExperiment(object):
     monitor_name -- name of the monitor to be used
     monitor_width -- int describing length of display monitor in cm
     monitor_distance -- int describing participant distance from monitor in cm
+    monitor_px -- list containing monitor resolution (x,y)
 
     Methods:
     convert_color_value -- convert a list of 3 values from 0 to 255 to -1 to 1.
@@ -67,7 +68,7 @@ class BaseExperiment(object):
 
     def __init__(self, experiment_name, data_fields, bg_color=[128, 128, 128],
                  monitor_name='Experiment Monitor', monitor_width=53,
-                 monitor_distance=70):
+                 monitor_distance=70, monitor_px=[1920, 1080]):
         """Creates a new BaseExperiment object.
 
         Parameters:
@@ -84,6 +85,7 @@ class BaseExperiment(object):
             in cm (default 53).
         monitor_distance -- An int describing the distance the participant sits
             from the monitor in cm (default 70).
+        monitor_px -- A list containing the resolution of the monitor (x,y)
         """
 
         self.experiment_name = experiment_name
@@ -92,6 +94,7 @@ class BaseExperiment(object):
         self.monitor_name = monitor_name
         self.monitor_width = monitor_width
         self.monitor_distance = monitor_distance
+        self.monitor_px = monitor_px
 
         self.experiment_data = []
         self.experiment_data_filename = None
@@ -102,6 +105,7 @@ class BaseExperiment(object):
         self.experiment_monitor = psychopy.monitors.Monitor(
             self.monitor_name, width=self.monitor_width,
             distance=self.monitor_distance)
+        self.experiment_monitor.setSizePix(monitor_px)
 
     @staticmethod
     def __confirm_overwrite():
