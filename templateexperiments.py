@@ -34,7 +34,11 @@ from __future__ import division
 import os
 import pickle
 
-import psychopy
+import psychopy.monitors
+import psychopy.visual
+import psychopy.gui
+import psychopy.core
+import psychopy.event
 
 
 class BaseExperiment(object):
@@ -154,15 +158,15 @@ class BaseExperiment(object):
                    ],
             tip={'Unique Subject Identifier': 'From the cronus log',
                  'Pickle File': 'Load if restarting from a crash',
-                 },
-            screen=0
+                 }
         )
 
-    def save_experiment_info(self):
+    def save_experiment_info(self, filename=None):
         """Writes the info from the dialog box to a text file."""
-        filename = (self.experiment_name + '_' +
-                    self.experiment_info['Subject Number'].zfill(3) +
-                    '_info.txt')
+        if filename is None:
+            filename = (self.experiment_name + '_' +
+                        self.experiment_info['Subject Number'].zfill(3) +
+                        '_info.txt')
 
         with open(filename, 'a') as info_file:
             for key, value in self.experiment_info.iteritems():
@@ -325,6 +329,7 @@ class BaseExperiment(object):
         if wait_for_input:
             psychopy.core.wait(.5)  # Prevents accidental key presses
             psychopy.event.waitKeys()
+        self.experiment_window.flip()
 
     def quit_experiment(self):
         """Completes anything that must occur when the experiment ends."""
