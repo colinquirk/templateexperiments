@@ -329,7 +329,7 @@ class BaseExperiment(object):
         if wait_for_input:
             psychopy.core.wait(.5)  # Prevents accidental key presses
             psychopy.event.waitKeys()
-        self.experiment_window.flip()
+            self.experiment_window.flip()
 
     def quit_experiment(self):
         """Completes anything that must occur when the experiment ends."""
