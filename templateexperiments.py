@@ -18,6 +18,7 @@ types of changes may have unintended consequences so please be careful! If you
 need help using this module, have requests or improvements, or found this code
 useful please let me know through email or GitHub.
 
+Classes:
 BaseExperiment -- All experiments inherit from BaseExperiment. Provides basic
     functionality needed by all experiments. See help(BaseExperiment)
 EEGExperiment -- Provides methods related to EEG recording.
