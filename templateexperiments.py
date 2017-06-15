@@ -91,7 +91,7 @@ class BaseExperiment(object):
             in cm (default 53).
         monitor_distance -- An int describing the distance the participant sits
             from the monitor in cm (default 70).
-        monitor_px -- A list containing the resolution of the monitor (x,y)
+        monitor_px -- A list containing the resolution of the monitor (x,y).
         """
 
         self.experiment_name = experiment_name
