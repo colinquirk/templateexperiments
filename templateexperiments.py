@@ -173,13 +173,30 @@ class BaseExperiment(object):
         )
 
     def save_experiment_info(self, filename=None):
-        """Writes the info from the dialog box to a text file."""
+        """Writes the info from the dialog box to a text file.
+
+        Parameters:
+        filename -- a string defining the filename with no extension
+        """
+
         if filename is None:
             filename = (self.experiment_name + '_' +
                         self.experiment_info['Subject Number'].zfill(3) +
-                        '_info.txt')
+                        '_info')
+        elif filename[-4:] == '.txt':
+            filename = filename[:-4]
 
-        with open(filename, 'a') as info_file:
+        if os.path.isfile(filename + '.txt'):
+            if not self.__confirm_overwrite():
+                # If the file exists and we can't overwrite make a new filename
+                i = 1
+                new_filename = filename + '(' + str(i) + ')'
+                while os.path.isfile(filename + '.txt'):
+                    i += 1
+                    new_filename = filename + '(' + str(i) + ')'
+                filename = new_filename
+
+        with open(filename, 'w') as info_file:
             for key, value in self.experiment_info.iteritems():
                 info_file.write(key + ':' + value + '\n')
             info_file.write('\n')
