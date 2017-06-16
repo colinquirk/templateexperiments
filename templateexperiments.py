@@ -191,10 +191,14 @@ class BaseExperiment(object):
                 # If the file exists and we can't overwrite make a new filename
                 i = 1
                 new_filename = filename + '(' + str(i) + ')'
-                while os.path.isfile(filename + '.txt'):
+                while os.path.isfile(new_filename + '.txt'):
                     i += 1
                     new_filename = filename + '(' + str(i) + ')'
                 filename = new_filename
+
+        filename = filename + '.txt'
+
+        print filename
 
         with open(filename, 'w') as info_file:
             for key, value in self.experiment_info.iteritems():
