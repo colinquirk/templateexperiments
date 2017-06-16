@@ -123,7 +123,7 @@ class BaseExperiment(object):
 
         overwrite_dlg = psychopy.gui.Dlg(
             'Overwrite?', labelButtonOK='Overwrite',
-            labelButtonCancel='New File')
+            labelButtonCancel='New File', screen=1)
         overwrite_dlg.addText('File already exists. Overwrite?')
         overwrite_dlg.show()
 
@@ -168,7 +168,8 @@ class BaseExperiment(object):
                    ],
             tip={'Unique Subject Identifier': 'From the cronus log',
                  'Pickle File': 'Load if restarting from a crash',
-                 }
+                 },
+            screen=1
         )
 
     def save_experiment_info(self, filename=None):
@@ -286,12 +287,11 @@ class BaseExperiment(object):
             self.experiment_info['Subject Number'].zfill(3) + '.pickle',
             'wb+'))
 
-    def open_window(self):
+    def open_window(self, **kwargs):
         """Opens the psychopy window."""
         self.experiment_window = psychopy.visual.Window(
             monitor=self.experiment_monitor, fullscr=True, color=self.bg_color,
-            colorSpace='rgb', allowGUI=False, winType='pyglet', units='deg',
-            screen=0)
+            colorSpace='rgb', units='deg', **kwargs)
 
     def display_text_screen(
             self, text='', text_color=[0, 0, 0], text_height=36,
