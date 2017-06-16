@@ -198,8 +198,6 @@ class BaseExperiment(object):
 
         filename = filename + '.txt'
 
-        print filename
-
         with open(filename, 'w') as info_file:
             for key, value in self.experiment_info.iteritems():
                 info_file.write(key + ':' + value + '\n')
