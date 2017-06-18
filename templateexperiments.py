@@ -39,6 +39,7 @@ from __future__ import division
 
 import os
 import pickle
+import sys
 
 import psychopy.monitors
 import psychopy.visual
@@ -108,6 +109,8 @@ class BaseExperiment(object):
         self.experiment_info = {}
         self.experiment_window = None
 
+        self.overwrite_ok = None
+
         self.experiment_monitor = psychopy.monitors.Monitor(
             self.monitor_name, width=self.monitor_width,
             distance=self.monitor_distance)
@@ -158,7 +161,7 @@ class BaseExperiment(object):
             self.experiment_info.update(additional_fields_dict)
 
         # Modifies experiment_info dict directly
-        psychopy.gui.DlgFromDict(
+        exp_info = psychopy.gui.DlgFromDict(
             self.experiment_info, title=self.experiment_name,
             order=['Subject Number',
                    'Age',
@@ -171,6 +174,8 @@ class BaseExperiment(object):
                  },
             screen=1
         )
+
+        return exp_info.OK
 
     def save_experiment_info(self, filename=None):
         """Writes the info from the dialog box to a text file.
@@ -187,8 +192,10 @@ class BaseExperiment(object):
             filename = filename[:-4]
 
         if os.path.isfile(filename + '.txt'):
-            if not self.__confirm_overwrite():
-                # If the file exists and we can't overwrite make a new filename
+            if self.overwrite_ok is None:
+                self.overwrite_ok = self.__confirm_overwrite()
+            if not self.overwrite_ok:
+                # If the file exists make a new filename
                 i = 1
                 new_filename = filename + '(' + str(i) + ')'
                 while os.path.isfile(new_filename + '.txt'):
@@ -218,7 +225,9 @@ class BaseExperiment(object):
             data_filename = data_filename[:-4]
 
         if os.path.isfile(data_filename + '.csv'):
-            if not self.__confirm_overwrite():
+            if self.overwrite_ok is None:
+                self.overwrite_ok = self.__confirm_overwrite()
+            if not self.overwrite_ok:
                 # If the file exists and we can't overwrite make a new filename
                 i = 1
                 new_filename = data_filename + '(' + str(i) + ')'
@@ -307,14 +316,17 @@ class BaseExperiment(object):
             'wb+'))
 
     def open_window(self, **kwargs):
-        """Opens the psychopy window."""
+        """Opens the psychopy window.
+
+        Additional keyword arguments are sent to psychopy.visual.Window().
+        """
         self.experiment_window = psychopy.visual.Window(
             monitor=self.experiment_monitor, fullscr=True, color=self.bg_color,
-            colorSpace='rgb', units='deg', **kwargs)
+            colorSpace='rgb', units='deg', allowGUI=False, **kwargs)
 
     def display_text_screen(
             self, text='', text_color=[0, 0, 0], text_height=36,
-            bg_color=None, wait_for_input=True):
+            bg_color=None, wait_for_input=True, **kwargs):
         """Takes a string as input and draws it centered on the screen.
 
         Allows for simple writing of text to a screen with a background color
@@ -334,6 +346,8 @@ class BaseExperiment(object):
         wait_for_input -- Bool that defines whether the screen will wait for
             keyboard input before continuing. If waiting for keys, a .5 second
             buffer is added to prevent accidental advancing.
+
+        Additional keyword arguments are sent to psychopy.visual.TextStim().
         """
 
         if bg_color is None:
@@ -349,20 +363,27 @@ class BaseExperiment(object):
 
         textObject = psychopy.visual.TextStim(
             self.experiment_window, text=text, color=text_color, units='pix',
-            height=text_height, alignHoriz='center', alignVert='center')
+            height=text_height, alignHoriz='center', alignVert='center',
+            wrapWidth=1500, **kwargs)
 
         backgroundRect.draw()
         textObject.draw()
         self.experiment_window.flip()
 
+        keys = None
+
         if wait_for_input:
-            psychopy.core.wait(.5)  # Prevents accidental key presses
-            psychopy.event.waitKeys()
+            psychopy.core.wait(.2)  # Prevents accidental key presses
+            keys = psychopy.event.waitKeys()
             self.experiment_window.flip()
+
+        return keys
 
     def quit_experiment(self):
         """Completes anything that must occur when the experiment ends."""
         self.experiment_window.close()
+        print 'The experiment has ended.'
+        sys.exit(0)
 
 
 class EEGExperiment(BaseExperiment):
