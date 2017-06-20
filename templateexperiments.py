@@ -241,7 +241,9 @@ class BaseExperiment(object):
         # Write the header
         with open(self.experiment_data_filename, 'w+') as data_file:
             for field in self.data_fields:
+                data_file.write('"')
                 data_file.write(field)
+                data_file.write('"')
                 if field != self.data_fields[-1]:
                     data_file.write(',')
             data_file.write('\n')
@@ -270,11 +272,13 @@ class BaseExperiment(object):
             for trial in range(
                     self.data_lines_written, len(self.experiment_data)):
                 for field in self.data_fields:
+                    data_file.write('"')
                     try:
                         data_file.write(
                             str(self.experiment_data[trial][field]))
                     except KeyError:
                         data_file.write('NA')
+                    data_file.write('"')
                     if field != self.data_fields[-1]:
                         data_file.write(',')
                 data_file.write('\n')
@@ -308,7 +312,7 @@ class BaseExperiment(object):
         }
 
         if additional_fields_dict is not None:
-            pickle_dict.update()
+            pickle_dict.update(additional_fields_dict)
 
         pickle.dump(pickle_dict, open(
             self.experiment_name + '_' +
