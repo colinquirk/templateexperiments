@@ -153,8 +153,7 @@ class BaseExperiment(object):
         self.experiment_info = {'Subject Number': '0',
                                 'Age': '0',
                                 'Experimenter Initials': 'CQ',
-                                'Unique Subject Identifier': '000000',
-                                'Pickle File': '',
+                                'Unique Subject Identifier': '000000'
                                 }
 
         if additional_fields_dict is not None:
@@ -166,12 +165,9 @@ class BaseExperiment(object):
             order=['Subject Number',
                    'Age',
                    'Experimenter Initials',
-                   'Unique Subject Identifier',
-                   'Pickle File',
+                   'Unique Subject Identifier'
                    ],
-            tip={'Unique Subject Identifier': 'From the cronus log',
-                 'Pickle File': 'Load if restarting from a crash',
-                 },
+            tip={'Unique Subject Identifier': 'From the cronus log'},
             screen=1
         )
 
@@ -207,7 +203,7 @@ class BaseExperiment(object):
 
         with open(filename, 'w') as info_file:
             for key, value in self.experiment_info.iteritems():
-                info_file.write(key + ':' + value + '\n')
+                info_file.write(key + ':' + str(value) + '\n')
             info_file.write('\n')
 
     def open_csv_data_file(self, data_filename=None):
