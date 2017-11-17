@@ -36,7 +36,6 @@ EEGandEyeTrackingExperiment -- convinence class that inherits EEG and eye
 """
 
 from __future__ import division
-from __future__ import print_function
 
 import os
 import pickle
@@ -47,8 +46,6 @@ import psychopy.visual
 import psychopy.gui
 import psychopy.core
 import psychopy.event
-
-import remote_pycorder
 
 
 class BaseExperiment(object):
@@ -367,7 +364,7 @@ class BaseExperiment(object):
         textObject = psychopy.visual.TextStim(
             self.experiment_window, text=text, color=text_color, units='pix',
             height=text_height, alignHoriz='center', alignVert='center',
-            wrapWidth=1500, **kwargs)
+            wrapWidth=700, **kwargs)
 
         backgroundRect.draw()
         textObject.draw()
@@ -385,17 +382,14 @@ class BaseExperiment(object):
     def quit_experiment(self):
         """Completes anything that must occur when the experiment ends."""
         self.experiment_window.close()
-        print('The experiment has ended.')
+        print 'The experiment has ended.'
         sys.exit(0)
 
 
 class EEGExperiment(BaseExperiment):
     """This is an EEG experiment class."""
-    def __init__(self, config_filepath, tcp_ip="100.1.1.3", tcp_port=6700,
-                 **kwargs):
-        self.eeg_session = remote_pycorder.PycorderSession(
-            config_filepath, tcp_ip, tcp_port)
-        BaseExperiment.__init__(**kwargs)
+    def __init__(self):
+        pass
 
 
 class EyeTrackingExperiment(BaseExperiment):
@@ -404,7 +398,7 @@ class EyeTrackingExperiment(BaseExperiment):
         pass
 
 
-class EEGandEyeTrackingExperiment(BaseExperiment):
+class EEGandEyeTrackingExperiment(EEGExperiment, EyeTrackingExperiment):
     """This is inherits from EEGExperiment and EyeTrackingExperiment,
     for convinence.
     """
