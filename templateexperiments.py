@@ -364,7 +364,7 @@ class BaseExperiment(object):
         textObject = psychopy.visual.TextStim(
             self.experiment_window, text=text, color=text_color, units='pix',
             height=text_height, alignHoriz='center', alignVert='center',
-            wrapWidth=700, **kwargs)
+            wrapWidth=round(.8*self.experiment_window.size[0]), **kwargs)
 
         backgroundRect.draw()
         textObject.draw()
