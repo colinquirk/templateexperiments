@@ -36,6 +36,7 @@ EEGandEyeTrackingExperiment -- convinence class that inherits EEG and eye
 """
 
 from __future__ import division
+from __future__ import print_function
 
 import os
 import pickle
@@ -46,6 +47,17 @@ import psychopy.visual
 import psychopy.gui
 import psychopy.core
 import psychopy.event
+
+
+# Convenience
+def convert_color_value(color):
+    """Converts a list of 3 values from 0 to 255 to -1 to 1.
+
+    Parameters:
+    color -- A list of 3 ints between 0 and 255 to be converted.
+    """
+
+    return [round(((n/127.5)-1), 2) for n in color]
 
 
 class BaseExperiment(object):
@@ -61,7 +73,6 @@ class BaseExperiment(object):
     monitor_px -- list containing monitor resolution (x,y)
 
     Methods:
-    convert_color_value -- convert a list of 3 values from 0 to 255 to -1 to 1.
     get_experiment_info_from_dialog -- gets subject info from a dialog box.
     save_experiment_info -- write the info from the dialog box to a text file.
     open_csv_data_file -- opens a csv data file and writes the header.
@@ -75,7 +86,7 @@ class BaseExperiment(object):
 
     def __init__(self, experiment_name, data_fields, bg_color=[128, 128, 128],
                  monitor_name='Experiment Monitor', monitor_width=53,
-                 monitor_distance=70, monitor_px=[1920, 1080]):
+                 monitor_distance=70, monitor_px=[1920, 1080], **kwargs):
         """Creates a new BaseExperiment object.
 
         Parameters:
@@ -97,7 +108,7 @@ class BaseExperiment(object):
 
         self.experiment_name = experiment_name
         self.data_fields = data_fields
-        self.bg_color = self.convert_color_value(bg_color)
+        self.bg_color = convert_color_value(bg_color)
         self.monitor_name = monitor_name
         self.monitor_width = monitor_width
         self.monitor_distance = monitor_distance
@@ -116,6 +127,8 @@ class BaseExperiment(object):
             distance=self.monitor_distance)
         self.experiment_monitor.setSizePix(monitor_px)
 
+        vars(self).update(kwargs)  # Add anything else you want
+
     @staticmethod
     def __confirm_overwrite():
         """Private, static method that shows a dialog asking if a file can be
@@ -131,16 +144,6 @@ class BaseExperiment(object):
         overwrite_dlg.show()
 
         return overwrite_dlg.OK
-
-    @staticmethod
-    def convert_color_value(color):
-        """Converts a list of 3 values from 0 to 255 to -1 to 1.
-
-        Parameters:
-        color -- A list of 3 ints between 0 and 255 to be converted.
-        """
-
-        return [round(((n/127.5)-1), 2) for n in color]
 
     def get_experiment_info_from_dialog(self, additional_fields_dict=None):
         """Gets subject info from dialog box.
@@ -353,13 +356,13 @@ class BaseExperiment(object):
         if bg_color is None:
             bg_color = self.bg_color
         else:
-            bg_color = self.convert_color_value(bg_color)
+            bg_color = convert_color_value(bg_color)
 
         backgroundRect = psychopy.visual.Rect(
             self.experiment_window, fillColor=bg_color, units='norm', width=2,
             height=2)
 
-        text_color = self.convert_color_value(text_color)
+        text_color = convert_color_value(text_color)
 
         textObject = psychopy.visual.TextStim(
             self.experiment_window, text=text, color=text_color, units='pix',
@@ -382,24 +385,5 @@ class BaseExperiment(object):
     def quit_experiment(self):
         """Completes anything that must occur when the experiment ends."""
         self.experiment_window.close()
-        print 'The experiment has ended.'
+        print('The experiment has ended.')
         sys.exit(0)
-
-
-class EEGExperiment(BaseExperiment):
-    """This is an EEG experiment class."""
-    def __init__(self):
-        pass
-
-
-class EyeTrackingExperiment(BaseExperiment):
-    """This is an eye tracking experiment class."""
-    def __init__(self):
-        pass
-
-
-class EEGandEyeTrackingExperiment(EEGExperiment, EyeTrackingExperiment):
-    """This is inherits from EEGExperiment and EyeTrackingExperiment,
-    for convinence.
-    """
-    pass
