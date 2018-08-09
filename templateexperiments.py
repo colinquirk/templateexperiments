@@ -23,16 +23,6 @@ BaseExperiment -- All experiments inherit from BaseExperiment. Provides basic
     functionality needed by all experiments.
     See 'print templateexperiments.BaseExperiment.__doc__' for simple class
     docs or help(templateexperiments.BaseExperiment) for everything.
-EEGExperiment -- Provides methods related to EEG recording.
-    See 'print templateexperiments.EEGExperiment.__doc__' for simple class
-    docs or help(templateexperiments.EEGExperiment) for everything.
-EyeTrackingExperiment -- Provides methods related to eye tracking.
-    See 'print templateexperiments.EyeTrackingExperiment.__doc__' for simple
-    class docs or help(templateexperiments.EyeTrackingExperiment) for
-    everything.
-EEGandEyeTrackingExperiment -- convinence class that inherits EEG and eye
-    tracking methods. See the help for the other classes for their parameters
-    and methods.
 """
 
 from __future__ import division
