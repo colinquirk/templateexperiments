@@ -1,67 +1,72 @@
 import time
 
 import pylink as pl
+from EyeLinkCoreGraphicsPsychoPy import EyeLinkCoreGraphicsPsychoPy
 
 
 class EyeLinker(object):
-    def __init__(self, filename, res):
+    def __init__(self, window, filename, resolution):
+        self.window = window
         self.edf_filename = filename
-        self.res = res
+        self.resolution = resolution
+        self.tracker = pl.EyeLink()
+        self.genv = EyeLinkCoreGraphicsPsychoPy(self.tracker, self.window)
 
-    def init_graphics(self):
-        # pl.pylink.openGraphics()
-        # pl.EYELINK.sendCommand("screen_pixel_coords = 0 0 %d %d" % self.res)
-        # pl.EYELINK.sendMessage("DISPLAY_COORDS 0 0 %d %d" % self.res)
-        pass
+    def initialize_graphics(self):
+        self.tracker.setOfflineMode()
+        pl.openGraphicsEx(self.genv)
 
     def initialize_tracker(self):
         pl.pylink.flushGetkeyQueue()
-        pl.EYELINK.setOfflineMode()
+        self.tracker.setOfflineMode()
 
-        pl.EYELINK.setFileEventFilter(
+        self.sendCommand("screen_pixel_coords = 0 0 %d %d" % self.resolution)
+        self.sendMessage("DISPLAY_COORDS 0 0 %d %d" % self.resolution)
+
+        self.tracker.setFileEventFilter(
             "LEFT,RIGHT,FIXATION,SACCADE,BLINK,MESSAGE,BUTTON")
-        pl.EYELINK.setFileSampleFilter(
+        self.tracker.setFileSampleFilter(
             "LEFT,RIGHT,GAZE,AREA,GAZERES,STATUS")
-        pl.EYELINK.setLinkEventFilter(
+        self.tracker.setLinkEventFilter(
             "LEFT,RIGHT,FIXATION,SACCADE,BLINK,BUTTON")
-        pl.EYELINK.setLinkSampleFilter(
+        self.tracker.setLinkSampleFilter(
             "LEFT,RIGHT,GAZE,GAZERES,AREA,STATUS")
 
     def send_calibration_settings(self, settings):
         pass
 
     def open_edf(self):
-        pl.EYELINK.openDataFile(self.edf_filename)
+        self.tracker.openDataFile(self.edf_filename)
 
     def close_edf(self):
-        pl.EYELINK.closeDataFile()
+        self.tracker.closeDataFile()
 
     def transfer_edf(self):
-        pl.EYELINK.receiveDataFile(self.edf_filename, self.edf_filename)
+        self.tracker.receiveDataFile(self.edf_filename, self.edf_filename)
 
     def calibrate(self):
-        pl.EYELINK.doTrackerSetup()
+        self.tracker.doTrackerSetup()
 
-    def drift_correct(self, res=None):
-        if res is None:
-            res = self.res
+    def drift_correct(self, resolution=None):
+        if resolution is None:
+            resolution = self.resolution
 
-        pl.EYELINK.doDriftCorrect(res[0], res[1], 0, 0)
+        self.tracker.doDriftCorrect(resolution[0], resolution[1], 0, 0)
 
     def start_recording(self):
-        pl.EYELINK.startRecording(1, 1, 1, 1)
+        self.tracker.startRecording(1, 1, 1, 1)
         time.sleep(.1)  # required
 
     def stop_recording(self):
         time.sleep(.1)  # required
-        pl.EYELINK.stopRecording()
+        self.tracker.stopRecording()
 
     def send_command(self, cmd):
-        pl.EYELINK.sendCommand(cmd)
+        self.tracker.sendCommand(cmd)
 
     def send_message(self, msg):
-        pl.EYELINK.sendMessage(msg)
+        self.tracker.sendMessage(msg)
 
     def close_connection(self):
-        pl.EYELINK.close()
+        self.tracker.close()
         pl.pylink.closeGraphics()
