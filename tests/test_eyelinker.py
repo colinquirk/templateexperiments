@@ -13,25 +13,28 @@ tracker.initialize_graphics()
 tracker.open_edf()
 tracker.initialize_tracker()
 tracker.send_calibration_settings()
+print 'Initalization tests passed...'
+time.sleep(1)
 
 # most basic functionality
 tracker.calibrate()
 tracker.start_recording()
 time.sleep(2)
 tracker.stop_recording()
-
-# test drawing
-tracker.clear_screen()
-tracker.draw_text(text='Hello World!')
-time.sleep(2)
-tracker.clear_screen()
+print 'Basic functionality tests passed...'
+time.sleep(1)
 
 # test drift correct
 tracker.drift_correct()
+print 'Drift correct tests passed...'
+time.sleep(1)
 
 # clean up
 tracker.close_edf()
 tracker.transfer_edf()
+time.sleep(2)
 tracker.close_connection()
+print '\nClean up tests passed...'
 
 time.sleep(1)
+print 'All tests passed.'

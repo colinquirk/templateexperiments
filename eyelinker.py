@@ -8,7 +8,7 @@ class EyeLinker(object):
     def __init__(self, window, filename, resolution):
         self.window = window
 
-        if len(filename > 12):
+        if len(filename) > 12:
             raise ValueError(
                 'EDF filename must be at most 12 characters long including the extension.')
 
@@ -54,7 +54,7 @@ class EyeLinker(object):
             'calibration_type': 'HV9',
             'enable_automatic_calibration': 'YES',
             'error_sound': 'off',
-            'foreground_color': (0, 0, 0),
+            'foreground_color': (255, 255, 255),
             'good_sound': 'off',
             'pupil_size_diameter': 'NO',
             'saccade_acceleration_threshold': 9500,
@@ -104,26 +104,15 @@ class EyeLinker(object):
     def calibrate(self):
         self.tracker.doTrackerSetup()
 
-    def clear_screen(self, color=0):
-        self.send_command('clear_screen %i' % color)
-
-    def draw_text(self, text, x=None, y=None, color=0):
-        if x is None:
-            x = self.resolution[0] / 2
-
-        if y is None:
-            y = self.resolution[1] / 2
-
-        cmd = 'draw_text %i %i %i %s' % (x, y, color, '"' + text + '"')
-
-        self.send_command(cmd)
-
-    def drift_correct(self, position=None):
+    def drift_correct(self, position=None, setup=1):
         if position is None:
-            position = tuple([round(i/2) for i in self.resolution])
+            position = tuple([int(round(i/2)) for i in self.resolution])
 
-        self.tracker.doDriftCorrect(position[0], position[1], 1, 1)
-        self.tracker.applyDriftCorrect()
+        try:
+            self.tracker.doDriftCorrect(position[0], position[1], 1, setup)
+            self.tracker.applyDriftCorrect()
+        except RuntimeError as e:
+            print(e.message)
 
     def start_recording(self):
         self.tracker.startRecording(1, 1, 1, 1)
