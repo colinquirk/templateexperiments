@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import time
 
 from psychopy import visual
@@ -13,7 +15,7 @@ tracker.initialize_graphics()
 tracker.open_edf()
 tracker.initialize_tracker()
 tracker.send_calibration_settings()
-print 'Initalization tests passed...'
+print('Initalization tests passed...')
 time.sleep(1)
 
 # most basic functionality
@@ -21,12 +23,12 @@ tracker.calibrate()
 tracker.start_recording()
 time.sleep(2)
 tracker.stop_recording()
-print 'Basic functionality tests passed...'
+print('Basic functionality tests passed...')
 time.sleep(1)
 
 # test drift correct
 tracker.drift_correct()
-print 'Drift correct tests passed...'
+print('Drift correct tests passed...')
 time.sleep(1)
 
 # clean up
@@ -34,7 +36,7 @@ tracker.close_edf()
 tracker.transfer_edf()
 time.sleep(2)
 tracker.close_connection()
-print '\nClean up tests passed...'
+print('\nClean up tests passed...')
 
 time.sleep(1)
-print 'All tests passed.'
+print('All tests passed.')
