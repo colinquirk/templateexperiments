@@ -57,24 +57,24 @@ class BaseExperiment(object):
     """Basic experiment class providing functionality in all experiments
 
     Parameters:
-    experiment_name -- string defining the experiment title
-    data_fields -- list of strings defining data fields
     bg_color -- list of 3 values (0-255) defining the background color
-    monitor_name -- name of the monitor to be used
-    monitor_width -- int describing length of display monitor in cm
+    data_fields -- list of strings defining data fields
+    experiment_name -- string defining the experiment title
     monitor_distance -- int describing participant distance from monitor in cm
+    monitor_name -- name of the monitor to be used
     monitor_px -- list containing monitor resolution (x,y)
+    monitor_width -- int describing length of display monitor in cm
 
     Methods:
-    get_experiment_info_from_dialog -- gets subject info from a dialog box.
-    save_experiment_info -- write the info from the dialog box to a text file.
-    open_csv_data_file -- opens a csv data file and writes the header.
-    update_experiment_data -- extends any new data to the experiment_data list.
-    save_data_to_csv -- append new entries in experiment_data to csv data file.
-    save_experiment_pickle -- save a pickle so crashes can be recovered from.
-    open_window -- open a psychopy window.
     display_text_screen -- draws a string centered on the screen.
+    get_experiment_info_from_dialog -- gets subject info from a dialog box.
+    open_csv_data_file -- opens a csv data file and writes the header.
+    open_window -- open a psychopy window.
     quit_experiment -- ends the experiment.
+    save_data_to_csv -- append new entries in experiment_data to csv data file.
+    save_experiment_info -- write the info from the dialog box to a text file.
+    save_experiment_pickle -- save a pickle so crashes can be recovered from.
+    update_experiment_data -- extends any new data to the experiment_data list.
     """
 
     def __init__(self, experiment_name, data_fields, bg_color=[128, 128, 128],
@@ -83,20 +83,20 @@ class BaseExperiment(object):
         """Creates a new BaseExperiment object.
 
         Parameters:
-        experiment_name -- A string for the experiment title that also defines
-            the filename the experiment info from the dialog box is saved to.
-        data_fields -- list of strings containing the data fields to be stored
         bg_color -- A list of 3 values between 0 and 255 defining the
             background color.
+        data_fields -- list of strings containing the data fields to be stored
+        experiment_name -- A string for the experiment title that also defines
+            the filename the experiment info from the dialog box is saved to.
+        monitor_distance -- An int describing the distance the participant sits
+            from the monitor in cm (default 70).
         monitor_name -- The name of the monitor to be used
             Psychopy will search for the provided name to see if it was defined
             in monitor center. If it is not defined, a temporary monitor will
             be created.
+        monitor_px -- A list containing the resolution of the monitor (x,y).
         monitor_width -- An int describing the length of the display monitor
             in cm (default 53).
-        monitor_distance -- An int describing the distance the participant sits
-            from the monitor in cm (default 70).
-        monitor_px -- A list containing the resolution of the monitor (x,y).
         """
 
         self.experiment_name = experiment_name
