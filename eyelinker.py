@@ -51,17 +51,22 @@ class EyeLinker(object):
             'automatic_calibration_pacing': 1000,
             'background_color': (0, 0, 0),
             'binocular_enabled': 'NO',
+            'calibration_area_proportion': (0.5, 0.5),
             'calibration_type': 'HV9',
+            'elcl_configuration': 'BTABLER',
             'enable_automatic_calibration': 'YES',
             'error_sound': 'off',
             'foreground_color': (255, 255, 255),
             'good_sound': 'off',
+            'preamble_text': None,
             'pupil_size_diameter': 'NO',
             'saccade_acceleration_threshold': 9500,
             'saccade_motion_threshold': 0.15,
             'saccade_pursuit_fixup': 60,
             'saccade_velocity_threshold': 30,
+            'sample_rate': 1000,
             'target_sound': 'off',
+            'validation_area_proportion': (0.5, 0.5),
         }
 
         if settings is None:
@@ -77,9 +82,14 @@ class EyeLinker(object):
         self.send_command(
             'automatic_calibration_pacing = %i' % settings['automatic_calibration_pacing'])
         self.send_command('binocular_enabled = %s' % settings['binocular_enabled'])
+        self.send_command(
+            'calibration_area_proportion %i %i' % settings['calibration_area_proportion'])
         self.send_command('calibration_type = %s' % settings['calibration_type'])
+        self.send_command('elcl_select_configuration = %s' % settings['elcl_configuration'])
         self.send_command(
             'enable_automatic_calibration = %s' % settings['enable_automatic_calibration'])
+        if settings['preamble_text'] is not None:
+            self.send_command('add_file_preamble_text %s' % '"' + settings['preamble_text'] + '"')
         self.send_command('pupil_size_diameter = %s' % settings['pupil_size_diameter'])
         self.send_command(
             'saccade_acceleration_threshold = %i' % settings['saccade_acceleration_threshold'])
@@ -87,6 +97,9 @@ class EyeLinker(object):
         self.send_command('saccade_pursuit_fixup = %i' % settings['saccade_pursuit_fixup'])
         self.send_command(
             'saccade_velocity_threshold = %i' % settings['saccade_velocity_threshold'])
+        self.send_command('sample_rate = %i' % settings['sample_rate'])
+        self.send_command(
+            'validation_area_proportion %f %f' % settings['validation_area_proportion'])
 
     def open_edf(self):
         self.tracker.openDataFile(self.edf_filename)
