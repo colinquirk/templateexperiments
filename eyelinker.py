@@ -5,9 +5,7 @@ from EyeLinkCoreGraphicsPsychoPy import EyeLinkCoreGraphicsPsychoPy
 
 
 class EyeLinker(object):
-    def __init__(self, window, filename, resolution):
-        self.window = window
-
+    def __init__(self, window, filename, eye):
         if len(filename) > 12:
             raise ValueError(
                 'EDF filename must be at most 12 characters long including the extension.')
@@ -16,9 +14,15 @@ class EyeLinker(object):
             raise ValueError(
                 'Please include the .edf extension in the filename.')
 
+        if eye not in ('LEFT', 'RIGHT', 'BOTH'):
+            raise ValueError('eye must be set to LEFT, RIGHT, or BOTH.')
+
+        self.window = window
         self.edf_filename = filename
         self.edf_open = False
-        self.resolution = resolution
+        self.eye = eye
+        self.resolution = tuple(window.size)
+        print(self.resolution)
         self.tracker = pl.EyeLink()
         self.genv = EyeLinkCoreGraphicsPsychoPy(self.tracker, self.window)
 
@@ -47,10 +51,8 @@ class EyeLinker(object):
 
     def send_calibration_settings(self, settings=None):
         defaults = {
-            'active_eye': 'RIGHT',
             'automatic_calibration_pacing': 1000,
             'background_color': (0, 0, 0),
-            'binocular_enabled': 'NO',
             'calibration_area_proportion': (0.5, 0.5),
             'calibration_type': 'HV9',
             'elcl_configuration': 'BTABLER',
@@ -78,10 +80,17 @@ class EyeLinker(object):
         pl.setCalibrationSounds(
             settings['target_sound'], settings['good_sound'], settings['error_sound'])
 
-        self.send_command('active_eye = %s' % settings['active_eye'])
+        if self.eye in ('LEFT', 'RIGHT'):
+            self.send_command('active_eye = %s' % self.eye)
+
         self.send_command(
             'automatic_calibration_pacing = %i' % settings['automatic_calibration_pacing'])
-        self.send_command('binocular_enabled = %s' % settings['binocular_enabled'])
+
+        if self.eye == 'BOTH':
+            self.send_command('binocular_enabled = YES')
+        else:
+            self.send_command('binocular_enabled = NO')
+
         self.send_command(
             'calibration_area_proportion %f %f' % settings['calibration_area_proportion'])
         self.send_command('calibration_type = %s' % settings['calibration_type'])
@@ -134,6 +143,28 @@ class EyeLinker(object):
     def stop_recording(self):
         time.sleep(.1)  # required
         self.tracker.stopRecording()
+
+    @property
+    def gaze_data(self):
+        sample = self.tracker.getNewestSample()
+
+        if self.eye == 'LEFT':
+            return sample.getLeftEye().getGaze()
+        elif self.eye == 'RIGHT':
+            return sample.getRightEye().getGaze()
+        else:
+            return (sample.getLeftEye().getGaze(), sample.getRightEye().getGaze())
+
+    @property
+    def pupil_size(self):
+        sample = self.tracker.getNewestSample()
+
+        if self.eye == 'LEFT':
+            return sample.getLeftEye().getPupilSize()
+        elif self.eye == 'RIGHT':
+            return sample.getRightEye().getPupilSize()
+        else:
+            return (sample.getLeftEye().getPupilSize(), sample.getRightEye().getPupilSize())
 
     def set_offline_mode(self):
         self.tracker.setOfflineMode()
