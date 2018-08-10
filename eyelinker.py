@@ -83,7 +83,7 @@ class EyeLinker(object):
             'automatic_calibration_pacing = %i' % settings['automatic_calibration_pacing'])
         self.send_command('binocular_enabled = %s' % settings['binocular_enabled'])
         self.send_command(
-            'calibration_area_proportion %i %i' % settings['calibration_area_proportion'])
+            'calibration_area_proportion %f %f' % settings['calibration_area_proportion'])
         self.send_command('calibration_type = %s' % settings['calibration_type'])
         self.send_command('elcl_select_configuration = %s' % settings['elcl_configuration'])
         self.send_command(
