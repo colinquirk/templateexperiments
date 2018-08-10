@@ -18,6 +18,9 @@ types of changes may have unintended consequences so please be careful! If you
 need help using this module, have requests or improvements, or found this code
 useful please let me know through email or GitHub.
 
+Functions:
+convert_color_value -- Converts a list of 3 values from 0 to 255 to -1 to 1.
+
 Classes:
 BaseExperiment -- All experiments inherit from BaseExperiment. Provides basic
     functionality needed by all experiments.
