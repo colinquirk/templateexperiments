@@ -8,9 +8,13 @@ class EyeLinker(object):
     def __init__(self, window, filename, resolution):
         self.window = window
 
-        if len(filename > 12) or filename[-4:] != '.edf':
+        if len(filename > 12):
             raise ValueError(
                 'EDF filename must be at most 12 characters long including the extension.')
+
+        if filename[-4:] != '.edf':
+            raise ValueError(
+                'Please include the .edf extension in the filename.')
 
         self.edf_filename = filename
         self.edf_open = False
@@ -19,7 +23,7 @@ class EyeLinker(object):
         self.genv = EyeLinkCoreGraphicsPsychoPy(self.tracker, self.window)
 
     def initialize_graphics(self):
-        self.tracker.setOfflineMode()
+        self.set_offline_mode()
         pl.openGraphicsEx(self.genv)
 
     def initialize_tracker(self):
@@ -27,10 +31,10 @@ class EyeLinker(object):
             raise RuntimeError('EDF file must be open before tracker can be initialized.')
 
         pl.flushGetkeyQueue()
-        self.tracker.setOfflineMode()
+        self.set_offline_mode()
 
-        self.sendCommand("screen_pixel_coords = 0 0 %d %d" % self.resolution)
-        self.sendMessage("DISPLAY_COORDS 0 0 %d %d" % self.resolution)
+        self.send_command("screen_pixel_coords = 0 0 %d %d" % self.resolution)
+        self.send_message("DISPLAY_COORDS 0 0 %d %d" % self.resolution)
 
         self.tracker.setFileEventFilter(
             "LEFT,RIGHT,FIXATION,SACCADE,BLINK,MESSAGE,BUTTON")
@@ -41,7 +45,7 @@ class EyeLinker(object):
         self.tracker.setLinkSampleFilter(
             "LEFT,RIGHT,GAZE,GAZERES,AREA,STATUS")
 
-    def send_calibration_settings(self, settings):
+    def send_calibration_settings(self, settings=None):
         defaults = {
             'active_eye': 'RIGHT',
             'automatic_calibration_pacing': 1000,
@@ -59,6 +63,9 @@ class EyeLinker(object):
             'saccade_velocity_threshold': 30,
             'target_sound': 'off',
         }
+
+        if settings is None:
+            settings = {}
 
         settings.update(defaults)
 
@@ -83,6 +90,7 @@ class EyeLinker(object):
 
     def open_edf(self):
         self.tracker.openDataFile(self.edf_filename)
+        self.edf_open = True
 
     def close_edf(self):
         self.tracker.closeDataFile()
@@ -124,6 +132,9 @@ class EyeLinker(object):
     def stop_recording(self):
         time.sleep(.1)  # required
         self.tracker.stopRecording()
+
+    def set_offline_mode(self):
+        self.tracker.setOfflineMode()
 
     def send_command(self, cmd):
         self.tracker.sendCommand(cmd)
