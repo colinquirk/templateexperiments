@@ -22,7 +22,6 @@ class EyeLinker(object):
         self.edf_open = False
         self.eye = eye
         self.resolution = tuple(window.size)
-        print(self.resolution)
         self.tracker = pl.EyeLink()
         self.genv = EyeLinkCoreGraphicsPsychoPy(self.tracker, self.window)
 
