@@ -115,6 +115,7 @@ class EyeLinker(object):
 
     def close_edf(self):
         self.tracker.closeDataFile()
+        self.edf_open = False
 
     def transfer_edf(self, newFilename=None):
         if not newFilename:
