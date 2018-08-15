@@ -1,6 +1,7 @@
 from __future__ import print_function
 from __future__ import division
 
+import string
 import warnings
 
 import pylink
@@ -31,7 +32,31 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
             pylink.DC_ERR_BEEP: psychopy.sound.Sound('error.wav')
         }
 
-        self.mouse = psychopy.event.Mouse()
+        self.keys = {
+            'f1': pylink.F1_KEY,
+            'f2': pylink.F2_KEY,
+            'f3': pylink.F3_KEY,
+            'f4': pylink.F4_KEY,
+            'f5': pylink.F5_KEY,
+            'f6': pylink.F6_KEY,
+            'f7': pylink.F7_KEY,
+            'f8': pylink.F8_KEY,
+            'f9': pylink.F9_KEY,
+            'f10': pylink.F10_KEY,
+            'pageup': pylink.PAGE_UP,
+            'pagedown': pylink.PAGE_DOWN,
+            'up': pylink.CURS_UP,
+            'down': pylink.CURS_DOWN,
+            'left': pylink.CURS_LEFT,
+            'right': pylink.CURS_RIGHT,
+            'return': pylink.ENTER_KEY,
+            'escape': pylink.ESC_KEY,
+            'backspace': ord('\b'),
+            'space': ord(' '),
+            'tab': ord('\t')
+        }
+
+        self.mouse = psychopy.event.Mouse(visible=False)
 
         self.image_title = psychopy.visual.TextStim(
             self.window, text='', pos=(0, -0.2), units='norm', color=self.text_color
@@ -59,7 +84,7 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
 
     def setup_image_display(self, width, height):
         print('setup_image_display')
-        raise NotImplementedError('This should probably pass')
+        self.window.flip()
 
     def image_title(self, title):
         print('image_title')
@@ -100,7 +125,23 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
 
     def get_input_key(self):
         print('get_input_key')
-        raise NotImplementedError('TODO')
+        keys = []
+
+        for keycode, modifiers in psychopy.event.getKeys(modifiers=True):
+            print(keycode)
+            print(modifiers)
+            if keycode in self.keys:
+                key = self.keys[keycode]
+            elif keycode in string.ascii_letters:
+                key = ord(keycode)
+            else:
+                key = pylink.JUNK_KEY
+
+            mod = 256 if modifiers['alt'] else 0
+
+            keys.append(pylink.KeyInput(key, mod))
+
+        return keys
 
     def alert_printf(self, msg):
         print('alert_printf')
