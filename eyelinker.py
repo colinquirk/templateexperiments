@@ -56,9 +56,9 @@ class EyeLinker(object):
             'calibration_type': 'HV9',
             'elcl_configuration': 'BTABLER',
             'enable_automatic_calibration': 'YES',
-            'error_sound': 'off',
+            'error_sound': '',
             'foreground_color': (255, 255, 255),
-            'good_sound': 'off',
+            'good_sound': '',
             'preamble_text': None,
             'pupil_size_diameter': 'NO',
             'saccade_acceleration_threshold': 9500,
@@ -66,7 +66,7 @@ class EyeLinker(object):
             'saccade_pursuit_fixup': 60,
             'saccade_velocity_threshold': 30,
             'sample_rate': 1000,
-            'target_sound': 'off',
+            'target_sound': '',
             'validation_area_proportion': (0.5, 0.5),
         }
 
