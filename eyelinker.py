@@ -75,6 +75,8 @@ class EyeLinker(object):
 
         settings.update(defaults)
 
+        self.send_command('elcl_select_configuration = %s' % settings['elcl_configuration'])
+
         pl.setCalibrationColors(settings['foreground_color'], settings['background_color'])
         pl.setCalibrationSounds(
             settings['target_sound'], settings['good_sound'], settings['error_sound'])
@@ -93,7 +95,6 @@ class EyeLinker(object):
         self.send_command(
             'calibration_area_proportion %f %f' % settings['calibration_area_proportion'])
         self.send_command('calibration_type = %s' % settings['calibration_type'])
-        self.send_command('elcl_select_configuration = %s' % settings['elcl_configuration'])
         self.send_command(
             'enable_automatic_calibration = %s' % settings['enable_automatic_calibration'])
         if settings['preamble_text'] is not None:
