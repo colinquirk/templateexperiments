@@ -7,6 +7,7 @@ import pylink
 
 import psychopy.event
 import psychopy.sound
+import psychopy.tools
 import psychopy.visual
 
 
@@ -30,6 +31,8 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
             pylink.DC_ERR_BEEP: psychopy.sound.Sound('error.wav')
         }
 
+        self.mouse = psychopy.event.Mouse()
+
         self.image_title = psychopy.visual.TextStim(
             self.window, text='', pos=(0, -0.2), units='norm', color=self.text_color
         )
@@ -52,7 +55,7 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
 
     def record_abort_hide(self):
         print('record_abort_hide')
-        raise NotImplementedError('TODO')
+        raise NotImplementedError('This should probably pass')
 
     def setup_image_display(self, width, height):
         print('setup_image_display')
@@ -113,7 +116,12 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
 
     def get_mouse_state(self):
         print('get_mouse_state')
-        raise NotImplementedError('TODO')
+        mouse_pos = self.mouse.getPos()
+        mouse_pos = psychopy.tools.monitorunittools.convertToPix(
+            [mouse_pos], mouse_pos, self.window.units, self.window)
+        print(mouse_pos)
+        mouse_click = 1 if self.mouse.getPressed()[0] else 0
+        return (mouse_pos, mouse_click)
 
     def draw_cross_hair(self):
         print('draw_cross_hair')
