@@ -28,7 +28,7 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
             self.window, units='pix', radius=10, lineColor='black', fillColor='white'
         )
 
-        self.cal_target_outer = psychopy.visual.Circle(
+        self.cal_target_inner = psychopy.visual.Circle(
             self.window, units='pix', radius=4, lineColor='black', fillColor='black'
         )
 
