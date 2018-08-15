@@ -5,8 +5,9 @@ import warnings
 
 import pylink
 
-import psychopy.visual
 import psychopy.event
+import psychopy.sound
+import psychopy.visual
 
 
 class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
@@ -19,6 +20,15 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
             self.text_color = (-1, -1, -1)
         else:
             self.text_color = (1, 1, 1)
+
+        self.beeps = {
+            pylink.CAL_TARG_BEEP: psychopy.sound.Sound('type.wav'),
+            pylink.DC_TARG_BEEP: psychopy.sound.Sound('type.wav'),
+            pylink.CAL_GOOD_BEEP: psychopy.sound.Sound('qbeep.wav'),
+            pylink.DC_GOOD_BEEP: psychopy.sound.Sound('qbeep.wav'),
+            pylink.CAL_ERR_BEEP: psychopy.sound.Sound('error.wav'),
+            pylink.DC_ERR_BEEP: psychopy.sound.Sound('error.wav')
+        }
 
         self.image_title = psychopy.visual.TextStim(
             self.window, text='', pos=(0, -0.2), units='norm', color=self.text_color
@@ -83,7 +93,7 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
 
     def play_beep(self, beepid):
         print('play_beep')
-        raise NotImplementedError('TODO')
+        self.beeps[beepid].play()
 
     def get_input_key(self):
         print('get_input_key')
