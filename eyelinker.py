@@ -1,7 +1,7 @@
 import time
 
 import pylink as pl
-from EyeLinkCoreGraphicsPsychoPy import EyeLinkCoreGraphicsPsychoPy
+from PsychoPyCustomDisplay import PsychoPyCustomDisplay
 
 
 class EyeLinker(object):
@@ -23,7 +23,7 @@ class EyeLinker(object):
         self.eye = eye
         self.resolution = tuple(window.size)
         self.tracker = pl.EyeLink()
-        self.genv = EyeLinkCoreGraphicsPsychoPy(self.tracker, self.window)
+        self.genv = PsychoPyCustomDisplay(self.window, self.tracker)
 
     def initialize_graphics(self):
         self.set_offline_mode()
