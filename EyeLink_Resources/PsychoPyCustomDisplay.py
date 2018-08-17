@@ -15,7 +15,7 @@ import psychopy.tools
 import psychopy.visual
 
 
-class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
+class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
     def __init__(self, window, tracker):
         pylink.EyeLinkCustomDisplay.__init__(self)
         self.window = window
