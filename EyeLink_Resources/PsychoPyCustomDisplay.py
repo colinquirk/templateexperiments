@@ -1,8 +1,11 @@
 from __future__ import print_function
 from __future__ import division
 
+import array
 import string
 import warnings
+
+import PIL
 
 import pylink
 
@@ -18,6 +21,9 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
         self.window = window
         self.tracker = tracker
 
+        self.pal = []
+        self.image_buffer = array.array('I')
+
         if all(i >= 0.5 for i in self.window.color):
             self.text_color = (-1, -1, -1)
         else:
@@ -30,6 +36,14 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
             pylink.DC_GOOD_BEEP: psychopy.sound.Sound('qbeep.wav'),
             pylink.CAL_ERR_BEEP: psychopy.sound.Sound('error.wav'),
             pylink.DC_ERR_BEEP: psychopy.sound.Sound('error.wav')
+        }
+
+        self.colors = {
+            pylink.CR_HAIR_COLOR: (1, 1, 1),
+            pylink.PUPIL_HAIR_COLOR: (1, 1, 1),
+            pylink.PUPIL_BOX_COLOR: (-1, 1, -1),
+            pylink.SEARCH_LIMIT_BOX_COLOR: (1, -1, -1),
+            pylink.MOUSE_CURSOR_COLOR: (1, -1, -1)
         }
 
         self.keys = {
@@ -80,7 +94,7 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
 
     def record_abort_hide(self):
         print('record_abort_hide')
-        raise NotImplementedError('This should probably pass')
+        pass
 
     def setup_image_display(self, width, height):
         print('setup_image_display')
@@ -92,11 +106,38 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
 
     def draw_image_line(self, width, line, totlines, buff):
         print('draw_image_line')
-        raise NotImplementedError('TODO')
+
+        print(buff)
+
+        for i in buff:
+            self.image_buffer.append(self.pal[i])
+
+        if line == totlines:
+            bufferv = self.image_buffer.tostring()
+            image = PIL.Image.frombytes("RGBX", (width, totlines), bufferv)
+
+            image = image.resize((720, 600))
+            psychopy_image = psychopy.visual.ImageStim(self.window, image=image)
+
+            psychopy_image.draw()
+            self.draw_cross_hair()
+            self.window.flip()
+
+            self.image_buffer = array.array('I')
 
     def set_image_palette(self, r, g, b):
-        print('set_image_palette')
-        raise NotImplementedError('TODO')
+        self.pal = []
+        self.image_buffer = array.array('I')
+
+        print(r)
+        print(g)
+        print(b)
+
+        # Code taken from pylink docs and altered
+        for r_, g_, b_ in zip(r, g, b):
+            print(r_, g_, b_)
+            print((int(b_) << 16) | int(g_) << 8 | int(r_))
+            self.pal.append((int(b_) << 16) | int(g_) << 8 | int(r))
 
     def exit_image_display(self):
         print('exit_image_display')
@@ -117,7 +158,7 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
         self.cal_target_outer.draw()
         self.cal_target_inner.draw()
 
-        self.display.flip()
+        self.window.flip()
 
     def play_beep(self, beepid):
         print('play_beep')
@@ -149,7 +190,15 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
 
     def draw_line(self, x1, y1, x2, y2, colorindex):
         print('draw_line')
-        raise NotImplementedError('TODO')
+
+        if colorindex in self.colors:
+            color = self.colors[colorindex]
+        else:
+            color = (0, 0, 0)
+
+        psychopy.visual.Line(
+            self.window, units='pix', lineColor=color, start=(x1, y1), end=(x2, y2)
+        ).draw()
 
     def draw_lozenge(self, x, y, width, height, colorindex):
         print('draw_lozenge')
@@ -163,7 +212,3 @@ class EyeLinkCoreGraphicsPsychoPy(pylink.EyeLinkCustomDisplay):
         print(mouse_pos)
         mouse_click = 1 if self.mouse.getPressed()[0] else 0
         return (mouse_pos, mouse_click)
-
-    def draw_cross_hair(self):
-        print('draw_cross_hair')
-        raise NotImplementedError('TODO')
