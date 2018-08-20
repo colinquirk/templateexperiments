@@ -3,6 +3,9 @@ import time
 import pylink as pl
 from PsychoPyCustomDisplay import PsychoPyCustomDisplay
 
+import psychopy.event
+import psychopy.visual
+
 
 class EyeLinker(object):
     def __init__(self, window, filename, eye):
@@ -94,6 +97,7 @@ class EyeLinker(object):
 
         self.send_command(
             'calibration_area_proportion %f %f' % settings['calibration_area_proportion'])
+        
         self.send_command('calibration_type = %s' % settings['calibration_type'])
         self.send_command(
             'enable_automatic_calibration = %s' % settings['enable_automatic_calibration'])
@@ -124,8 +128,39 @@ class EyeLinker(object):
 
         self.tracker.receiveDataFile(self.edf_filename, self.edf_filename)
 
-    def calibrate(self):
-        self.tracker.doTrackerSetup()
+    def setup_tracker(self):
+        self.calibrate(skipText=True)
+
+    def calibrate(self, skipText=False, text=None):
+        self.window.flip()
+
+        if skipText:
+            self.tracker.doTrackerSetup()
+        else:
+            if text is None:
+                text = (
+                    'Experimenter:\n'
+                    'If you would like to calibrate, press space.\n'
+                    'To skip calibration, press the escape key.'
+                )
+
+            if all(i >= 0.5 for i in self.window.color):
+                text_color = (-1, -1, -1)
+            else:
+                text_color = (1, 1, 1)
+
+            psychopy.visual.TextStim(
+                self.window, text=text, pos=(0, 0), height=0.05, units='norm', color=text_color
+            ).draw()
+
+            self.window.flip()
+
+            keys = psychopy.event.waitKeys(keyList=['escape', 'space'])
+
+            self.window.flip()
+
+            if 'space' in keys:
+                self.tracker.doTrackerSetup()
 
     def drift_correct(self, position=None, setup=1):
         if position is None:

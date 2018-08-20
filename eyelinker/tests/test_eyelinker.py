@@ -19,7 +19,8 @@ print('Initalization tests passed...')
 time.sleep(1)
 
 # most basic functionality
-tracker.calibrate()
+tracker.setup_tracker()  # forced setup
+tracker.calibrate()  # choice given
 tracker.start_recording()
 time.sleep(2)
 tracker.stop_recording()
