@@ -97,7 +97,7 @@ class EyeLinker(object):
 
         self.send_command(
             'calibration_area_proportion %f %f' % settings['calibration_area_proportion'])
-        
+
         self.send_command('calibration_type = %s' % settings['calibration_type'])
         self.send_command(
             'enable_automatic_calibration = %s' % settings['enable_automatic_calibration'])
