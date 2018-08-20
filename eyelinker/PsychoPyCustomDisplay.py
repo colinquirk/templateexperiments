@@ -32,12 +32,12 @@ class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
             self.text_color = (1, 1, 1)
 
         self.beeps = {
-            pylink.CAL_TARG_BEEP: psychopy.sound.Sound(value='C', secs=0.05, octave=4),
-            pylink.DC_TARG_BEEP: psychopy.sound.Sound(value='C', secs=0.05, octave=4),
-            pylink.CAL_GOOD_BEEP: psychopy.sound.Sound(value='A', secs=0.1, octave=6),
-            pylink.DC_GOOD_BEEP: psychopy.sound.Sound(value='A', secs=0.1, octave=6),
-            pylink.CAL_ERR_BEEP: psychopy.sound.Sound(value='E', secs=0.5, octave=5),
-            pylink.DC_ERR_BEEP: psychopy.sound.Sound(value='E', secs=0.5, octave=5)
+            pylink.CAL_TARG_BEEP: psychopy.sound.Sound(value='C', secs=0.2, octave=5),
+            pylink.DC_TARG_BEEP: psychopy.sound.Sound(value='C', secs=0.2, octave=5),
+            pylink.CAL_GOOD_BEEP: psychopy.sound.Sound(value='A', secs=0.2, octave=6),
+            pylink.DC_GOOD_BEEP: psychopy.sound.Sound(value='A', secs=0.2, octave=6),
+            pylink.CAL_ERR_BEEP: psychopy.sound.Sound(value='E', secs=0.5, octave=4),
+            pylink.DC_ERR_BEEP: psychopy.sound.Sound(value='E', secs=0.5, octave=4)
         }
 
         self.colors = {
@@ -176,6 +176,7 @@ class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
         warnings.warn(msg, RuntimeWarning)
 
     def draw_line(self, x1, y1, x2, y2, colorindex):
+        # For some reason the crosshairs need to be fixed like this
         if x1 < 0:
             x1, x2 = x1 + 767, x2 + 767
             y1, y2 = y1 + 639, y2 + 639
@@ -199,10 +200,12 @@ class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
         else:
             color = (0, 0, 0)
 
-        print(x, y, height, width, color)
+        # Adjustments are made so that center is (0,0) and y is flipped
+        x = round(x + (0.5 * width)) - 96
+        y = round((160 - y) - (0.5 * height)) - 80
 
         psychopy.visual.Circle(
-            self.window, units='pix', lineColor=color, pos=(0, 0), size=(20, 10)).draw()
+            self.window, units='pix', lineColor=color, pos=(x, y), size=(width, height)).draw()
 
     def get_mouse_state(self):
         mouse_pos = self.mouse.getPos()
