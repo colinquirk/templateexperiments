@@ -36,8 +36,8 @@ class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
             pylink.DC_TARG_BEEP: psychopy.sound.Sound(value='C', secs=0.05, octave=4),
             pylink.CAL_GOOD_BEEP: psychopy.sound.Sound(value='A', secs=0.1, octave=6),
             pylink.DC_GOOD_BEEP: psychopy.sound.Sound(value='A', secs=0.1, octave=6),
-            pylink.CAL_ERR_BEEP: psychopy.sound.Sound(value='E'),
-            pylink.DC_ERR_BEEP: psychopy.sound.Sound(value='E')
+            pylink.CAL_ERR_BEEP: psychopy.sound.Sound(value='E', secs=0.5, octave=5),
+            pylink.DC_ERR_BEEP: psychopy.sound.Sound(value='E', secs=0.5, octave=5)
         }
 
         self.colors = {
@@ -194,7 +194,15 @@ class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
         ).draw()
 
     def draw_lozenge(self, x, y, width, height, colorindex):
-        return
+        if colorindex in self.colors:
+            color = self.colors[colorindex]
+        else:
+            color = (0, 0, 0)
+
+        print(x, y, height, width, color)
+
+        psychopy.visual.Circle(
+            self.window, units='pix', lineColor=color, pos=(0, 0), size=(20, 10)).draw()
 
     def get_mouse_state(self):
         mouse_pos = self.mouse.getPos()

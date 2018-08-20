@@ -1,14 +1,13 @@
-"""Basic experiment classes that are designed to be extended.
+"""Basic experiment class that is designed to be extended.
 
 Author - Colin Quirk (cquirk@uchicago.edu)
 
 Repo: https://github.com/colinquirk/templateexperiments
 
-These classes provide basic utility functions that are needed by all
-experiments of their type. Specific experiment classes should inherit from
-the correct class and extend/overwrite as needed.
+This class provides basic utility functions that are needed by all
+experiments. Specific experiment classes should inherit and extend/overwrite as needed.
 
-Note for other experimenters -- My experiments all inherit from these classes,
+Note for other experimenters -- My experiments all inherit from this class,
 so changes in these functions may result in unexpected changes elsewhere. If
 possible, changes to experiments should be made in the specific experiment
 class by overwriting template experiment methods. Ideally, the only changes
