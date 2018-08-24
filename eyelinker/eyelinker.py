@@ -173,7 +173,7 @@ class EyeLinker(object):
             print(e.message)
 
     def record(self, trial_func):
-        def wrapped_func(trial_func):
+        def wrapped_func():
             self.start_recording()
             trial_func()
             self.stop_recording()
