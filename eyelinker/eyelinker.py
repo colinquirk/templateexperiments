@@ -172,6 +172,13 @@ class EyeLinker(object):
         except RuntimeError as e:
             print(e.message)
 
+    def record(self, trial_func):
+        def wrapped_func(trial_func):
+            self.start_recording()
+            trial_func()
+            self.stop_recording()
+        return wrapped_func
+
     def start_recording(self):
         self.tracker.startRecording(1, 1, 1, 1)
         time.sleep(.1)  # required

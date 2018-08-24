@@ -27,6 +27,17 @@ tracker.stop_recording()
 print('Basic functionality tests passed...')
 time.sleep(1)
 
+
+# decorator test
+@tracker.record
+def my_trial():
+    time.sleep(2)
+
+
+my_trial()
+print('Decorator test passed.')
+time.sleep(1)
+
 # real time data
 left_eye_gaze, right_eye_gaze = tracker.gaze_data
 print(left_eye_gaze)
