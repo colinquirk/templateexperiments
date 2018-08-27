@@ -57,7 +57,6 @@ time.sleep(1)
 # clean up
 tracker.close_edf()
 tracker.transfer_edf()
-time.sleep(2)
 tracker.close_connection()
 print('\nClean up tests passed...')
 
