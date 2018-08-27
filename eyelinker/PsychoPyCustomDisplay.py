@@ -79,7 +79,7 @@ class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
         self.mouse = psychopy.event.Mouse(visible=False)
 
         self.image_title_object = psychopy.visual.TextStim(
-            self.window, text='', pos=(0, -0.2), height=0.05, units='norm', color=self.text_color
+            self.window, text='', pos=(0, -200), height=20, units='pix', color=self.text_color
         )
 
         self.cal_target_outer = psychopy.visual.Circle(
