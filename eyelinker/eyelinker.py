@@ -126,7 +126,7 @@ class EyeLinker(object):
         if not newFilename:
             newFilename = self.edf_filename
 
-        self.tracker.receiveDataFile(self.edf_filename, self.edf_filename)
+        self.tracker.receiveDataFile(self.edf_filename, newFilename)
 
     def setup_tracker(self):
         self.calibrate(skipText=True)
