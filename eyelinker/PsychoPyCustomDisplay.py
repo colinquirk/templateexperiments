@@ -209,6 +209,9 @@ class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
 
     def get_mouse_state(self):
         mouse_pos = self.mouse.getPos()
+        mouse_pos = psychopy.tools.monitorunittools.convertToPix(
+            mouse_pos, [0, 0], self.window.units, self.window
+        )
         # Adjustments are made so that center is (0,0) and y is flipped
         mouse_pos = (mouse_pos[0] + 96, (160 - mouse_pos[1]) - 80)
         mouse_click = 1 if self.mouse.getPressed()[0] else 0
