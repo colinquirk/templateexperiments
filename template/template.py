@@ -376,6 +376,7 @@ class BaseExperiment(object):
 
     def quit_experiment(self):
         """Completes anything that must occur when the experiment ends."""
+        if self.experiment_window:
         self.experiment_window.close()
         print('The experiment has ended.')
         sys.exit(0)
