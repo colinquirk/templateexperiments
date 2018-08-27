@@ -2,12 +2,16 @@ from __future__ import print_function
 
 import time
 
+from psychopy import monitors
 from psychopy import visual
 
 import eyelinker
 
 
-win = visual.Window([1920, 1080], units="pix", fullscr=True, color=[0, 0, 0])
+monitor = monitors.Monitor('test_monitor', width=53, distance=70)
+monitor.setSizePix([1920, 1080])
+
+win = visual.Window([800, 600], units="pix", color=[0, 0, 0], monitor=monitor)
 tracker = eyelinker.EyeLinker(win, 'test.edf', 'BOTH')
 
 # initialize
