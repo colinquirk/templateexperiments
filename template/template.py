@@ -122,7 +122,7 @@ class BaseExperiment(object):
         vars(self).update(kwargs)  # Add anything else you want
 
     @staticmethod
-    def __confirm_overwrite():
+    def _confirm_overwrite():
         """Private, static method that shows a dialog asking if a file can be
         overwritten.
 
@@ -184,7 +184,7 @@ class BaseExperiment(object):
 
         if os.path.isfile(filename + '.txt'):
             if self.overwrite_ok is None:
-                self.overwrite_ok = self.__confirm_overwrite()
+                self.overwrite_ok = self._confirm_overwrite()
             if not self.overwrite_ok:
                 # If the file exists make a new filename
                 i = 1
@@ -217,7 +217,7 @@ class BaseExperiment(object):
 
         if os.path.isfile(data_filename + '.csv'):
             if self.overwrite_ok is None:
-                self.overwrite_ok = self.__confirm_overwrite()
+                self.overwrite_ok = self._confirm_overwrite()
             if not self.overwrite_ok:
                 # If the file exists and we can't overwrite make a new filename
                 i = 1
@@ -377,6 +377,6 @@ class BaseExperiment(object):
     def quit_experiment(self):
         """Completes anything that must occur when the experiment ends."""
         if self.experiment_window:
-        self.experiment_window.close()
+            self.experiment_window.close()
         print('The experiment has ended.')
         sys.exit(0)
