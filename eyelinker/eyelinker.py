@@ -1,5 +1,8 @@
 from __future__ import print_function
 from __future__ import division
+
+import os
+import sys
 import time
 
 import pylink as pl
@@ -128,7 +131,11 @@ class EyeLinker(object):
         if not newFilename:
             newFilename = self.edf_filename
 
+        # Prevents timeouts due to excessive printing
+        sys.stdout = open(os.devnull, "w")
         self.tracker.receiveDataFile(self.edf_filename, newFilename)
+        sys.stdout = sys.__stdout__
+        print(newFilename + ' has been transferred successfully.')
 
     def setup_tracker(self):
         self.calibrate(skipText=True)
