@@ -25,6 +25,8 @@ time.sleep(1)
 # most basic functionality
 tracker.setup_tracker()  # forced setup
 tracker.calibrate()  # choice given
+tracker.send_status('Recording...')
+tracker.send_message('TRIALID 1')
 tracker.start_recording()
 time.sleep(2)
 tracker.stop_recording()
