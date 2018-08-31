@@ -227,6 +227,12 @@ class EyeLinker(object):
     def send_message(self, msg):
         self.tracker.sendMessage(msg)
 
+    def send_status(self, status):
+        if len(status) >= 80:
+            print('Warning: Status should be less than 80 characters.')
+
+        self.send_command("record_status_message '%s'" % status)
+
     def close_connection(self):
         self.tracker.close()
         pl.closeGraphics()
