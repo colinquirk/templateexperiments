@@ -138,38 +138,36 @@ class EyeLinker(object):
         print(newFilename + ' has been transferred successfully.')
 
     def setup_tracker(self):
-        self.calibrate(skipText=True)
+        self.window.flip()
+        self.tracker.doTrackerSetup()
 
-    def calibrate(self, skipText=False, text=None):
+    def calibrate(self, text=None):
         self.window.flip()
 
-        if skipText:
-            self.tracker.doTrackerSetup()
+        if text is None:
+            text = (
+                'Experimenter:\n'
+                'If you would like to calibrate, press space.\n'
+                'To skip calibration, press the escape key.'
+            )
+
+        if all(i >= 0.5 for i in self.window.color):
+            text_color = (-1, -1, -1)
         else:
-            if text is None:
-                text = (
-                    'Experimenter:\n'
-                    'If you would like to calibrate, press space.\n'
-                    'To skip calibration, press the escape key.'
-                )
+            text_color = (1, 1, 1)
 
-            if all(i >= 0.5 for i in self.window.color):
-                text_color = (-1, -1, -1)
-            else:
-                text_color = (1, 1, 1)
+        psychopy.visual.TextStim(
+            self.window, text=text, pos=(0, 0), height=0.05, units='norm', color=text_color
+        ).draw()
 
-            psychopy.visual.TextStim(
-                self.window, text=text, pos=(0, 0), height=0.05, units='norm', color=text_color
-            ).draw()
+        self.window.flip()
 
-            self.window.flip()
+        keys = psychopy.event.waitKeys(keyList=['escape', 'space'])
 
-            keys = psychopy.event.waitKeys(keyList=['escape', 'space'])
+        self.window.flip()
 
-            self.window.flip()
-
-            if 'space' in keys:
-                self.tracker.doTrackerSetup()
+        if 'space' in keys:
+            self.tracker.doTrackerSetup()
 
     def drift_correct(self, position=None, setup=1):
         if position is None:
