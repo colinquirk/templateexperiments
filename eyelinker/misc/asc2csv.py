@@ -1,0 +1,73 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+import argparse
+import glob
+import os
+import re
+import sys
+
+
+def convert_to_csv(filename, header, overwrite):
+    file_base = filename.rstrip('.asc')
+    newfile = file_base + '.csv'
+    if not overwrite:
+        i = 1
+        while os.path.isfile(newfile):
+            newfile = file_base + '(%i).csv' % i
+            i += 1
+
+    with open(newfile, 'w') as new_file:
+        if header:
+            new_file.write(header+'\n')
+
+        with open(filename) as old_file:
+            first = old_file.readline()
+            match = re.match('[0-9]+.?[0-9]+', first[-5:])
+
+            if match is None:
+                add_bools = True
+            else:
+                add_bools = False
+
+            for line in old_file.readlines():
+                if add_bools:
+                    pass
+                else:
+                    new_file.write(line.replace('\t', ','))
+
+
+def find_files():
+    files = []
+
+    if not sys.stdin.isatty():
+        for file in sys.stdin:
+            file = file.strip().lstrip('./')
+            if file[-4:] == '.asc':
+                files.append(file)
+    else:
+        files = glob.glob('*.asc')
+
+    return files
+
+
+def main():
+    ap = argparse.ArgumentParser(description='Converts asc files into csvs.')
+    ap.add_argument(
+        '-f', '--filename', help='The filename to convert (also accepts a list from stdin).'
+    )
+    ap.add_argument('-H', '--header', help='The header for the csv files.')
+    ap.add_argument('-o', '--overwrite', help='Files will be overwritten.', action='store_true')
+
+    args = vars(ap.parse_args())
+
+    if args['filename']:
+        convert_to_csv(**args)
+    else:
+        for filename in find_files():
+            convert_to_csv(filename, args['header'], args['overwrite'])
+
+
+if __name__ == '__main__':
+    main()
