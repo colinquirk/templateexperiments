@@ -18,24 +18,38 @@ def convert_to_csv(filename, header, overwrite):
             newfile = file_base + '(%i).csv' % i
             i += 1
 
-    with open(newfile, 'w') as new_file:
+    with open(newfile, 'w') as newfile:
         if header:
-            new_file.write(header+'\n')
+            newfile.write(header+'\n')
 
         with open(filename) as old_file:
-            first = old_file.readline()
+            first = old_file.readline().strip()
             match = re.match('[0-9]+.?[0-9]+', first[-5:])
 
-            if match is None:
-                add_bools = True
-            else:
-                add_bools = False
+        if match is None:
+            add_bools = True
+        else:
+            add_bools = False
 
+        with open(filename) as old_file:
             for line in old_file.readlines():
                 if add_bools:
-                    pass
+                    base_line = line.strip()[:-6]
+                    newfile.write(base_line.replace('\t', ','))
+
+                    bools = []
+                    for c in line.strip()[-5:]:
+                        if c == '.':
+                            bools.append(False)
+                        else:
+                            bools.append(True)
+
+                    for b in bools:
+                        newfile.write(',' + str(b))
+
+                    newfile.write('\n')
                 else:
-                    new_file.write(line.replace('\t', ','))
+                    newfile.write(line.replace('\t', ','))
 
 
 def find_files():
