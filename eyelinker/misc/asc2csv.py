@@ -31,25 +31,35 @@ def convert_to_csv(filename, header, overwrite):
         else:
             add_bools = False
 
+        # TODO refactor this
         with open(filename) as old_file:
+            block = 0
+            trial = 0
             for line in old_file.readlines():
-                if add_bools:
-                    base_line = line.strip()[:-6]
-                    newfile.write(base_line.replace('\t', ','))
+                if re.match('[0-9].*', line):
+                    newfile.write(str(block) + ',' + str(trial) + ',')
+                    if add_bools:
+                        base_line = line.strip()[:-6]
+                        newfile.write(base_line.replace('\t', ','))
 
-                    bools = []
-                    for c in line.strip()[-5:]:
-                        if c == '.':
-                            bools.append(False)
-                        else:
-                            bools.append(True)
+                        bools = []
+                        for c in line.strip()[-5:]:
+                            if c == '.':
+                                bools.append(False)
+                            else:
+                                bools.append(True)
 
-                    for b in bools:
-                        newfile.write(',' + str(b))
+                        for b in bools:
+                            newfile.write(',' + str(b))
 
-                    newfile.write('\n')
+                        newfile.write('\n')
+                    else:
+                        newfile.write(line.replace('\t', ','))
                 else:
-                    newfile.write(line.replace('\t', ','))
+                    if re.match('MSG\t[0-9]+\tBLOCK ([0-9]+)', line):
+                        block = re.match('MSG\t[0-9]+\tBLOCK ([0-9]+)', line).group(1)
+                    if re.match('MSG\t[0-9]+\tTRIAL ([0-9]+)', line):
+                        trial = re.match('MSG\t[0-9]+\tTRIAL ([0-9]+)', line).group(1)
 
 
 def find_files():
