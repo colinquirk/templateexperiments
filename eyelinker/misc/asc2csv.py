@@ -85,7 +85,8 @@ def main():
 
     if args['header'] is None:
         try:
-            with open('asc2csv_header.txt') as f:
+            # TODO: Find a better spot for this
+            with open('/usr/local/bin/asc2csv_header.txt') as f:
                 header = f.readline()
         except FileNotFoundError:
             header = None
