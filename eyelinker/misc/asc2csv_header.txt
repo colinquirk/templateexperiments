@@ -1,0 +1,1 @@
+Timestamp,LeftGazeX,LeftGazeY,LeftPupilArea,RightGazeX,RightGazeY,RightPupilArea,Input,Interpolated,LeftCRMissing,LeftCRRecovering,RightCRMissing,RightCRRecovering

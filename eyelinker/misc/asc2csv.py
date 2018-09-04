@@ -76,11 +76,27 @@ def main():
 
     args = vars(ap.parse_args())
 
+    overwrite = args['overwrite']
+
     if args['filename']:
-        convert_to_csv(**args)
+        filename = args['filename']
+    else:
+        filename = None
+
+    if args['header'] is None:
+        try:
+            with open('asc2csv_header.txt') as f:
+                header = f.readline()
+        except FileNotFoundError:
+            header = None
+    else:
+        header = args['header']
+
+    if filename:
+        convert_to_csv(filename, header, overwrite)
     else:
         for filename in find_files():
-            convert_to_csv(filename, args['header'], args['overwrite'])
+            convert_to_csv(filename, header, overwrite)
 
 
 if __name__ == '__main__':
