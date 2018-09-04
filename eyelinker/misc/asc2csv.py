@@ -40,6 +40,7 @@ def convert_to_csv(filename, header, overwrite):
                     newfile.write(str(block) + ',' + str(trial) + ',')
                     if add_bools:
                         base_line = line.strip()[:-6]
+                        base_line = base_line.replace('   .', 'NA')
                         newfile.write(base_line.replace('\t', ','))
 
                         bools = []
@@ -54,6 +55,7 @@ def convert_to_csv(filename, header, overwrite):
 
                         newfile.write('\n')
                     else:
+                        line = line.replace('   .', 'NA')
                         newfile.write(line.replace('\t', ','))
                 else:
                     if re.match('MSG\t[0-9]+\tBLOCK ([0-9]+)', line):
