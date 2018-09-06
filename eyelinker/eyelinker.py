@@ -146,6 +146,35 @@ class EyeLinker(object):
         self.window.flip()
         self.tracker.doTrackerSetup()
 
+    def display_eyetracking_instructions(self):
+        self.window.flip()
+
+        psychopy.visual.Circle(
+            self.window, units='pix', radius=18, lineColor='black', fillColor='white'
+        ).draw()
+        psychopy.visual.Circle(
+            self.window, units='pix', radius=6, lineColor='black', fillColor='black'
+        ).draw()
+
+        psychopy.visual.TextStim(
+            self.window, text='Sometimes a target that looks like this will appear.',
+            color=self.text_color, units='pix', pos=(0, -200), height=36
+        ).draw()
+
+        psychopy.visual.TextStim(
+            self.window, color=self.text_color, units='pix', pos=(0, 200), height=36,
+            text='We use it to calibrate the eye tracker. Stare at it whenever you see it.'
+        ).draw()
+
+        psychopy.visual.TextStim(
+            self.window, color=self.text_color, units='pix', pos=(0, 300), height=36,
+            text='Press any key to continue.'
+        ).draw()
+
+        self.window.flip()
+        psychopy.event.waitKeys()
+        self.window.flip()
+
     def calibrate(self, text=None):
         self.window.flip()
 

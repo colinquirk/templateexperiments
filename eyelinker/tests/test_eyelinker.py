@@ -23,6 +23,7 @@ print('Initalization tests passed...')
 time.sleep(1)
 
 # most basic functionality
+tracker.display_eyetracking_instructions()
 tracker.setup_tracker()  # forced setup
 tracker.calibrate()  # choice given
 tracker.send_status('Recording...')
