@@ -33,6 +33,11 @@ class EyeLinker(object):
         self.tracker = pl.EyeLink()
         self.genv = PsychoPyCustomDisplay(self.window, self.tracker)
 
+        if all(i >= 0.5 for i in self.window.color):
+            self.text_color = (-1, -1, -1)
+        else:
+            self.text_color = (1, 1, 1)
+
     def initialize_graphics(self):
         self.set_offline_mode()
         pl.openGraphicsEx(self.genv)
@@ -151,13 +156,8 @@ class EyeLinker(object):
                 'To skip calibration, press the escape key.'
             )
 
-        if all(i >= 0.5 for i in self.window.color):
-            text_color = (-1, -1, -1)
-        else:
-            text_color = (1, 1, 1)
-
         psychopy.visual.TextStim(
-            self.window, text=text, pos=(0, 0), height=0.05, units='norm', color=text_color
+            self.window, text=text, pos=(0, 0), height=0.05, units='norm', color=self.text_color
         ).draw()
 
         self.window.flip()
