@@ -158,16 +158,16 @@ class EyeLinker(object):
 
         psychopy.visual.TextStim(
             self.window, text='Sometimes a target that looks like this will appear.',
-            color=self.text_color, units='pix', pos=(0, -200), height=36
+            color=self.text_color, units='norm', pos=(0, 0.22), height=0.05
         ).draw()
 
         psychopy.visual.TextStim(
-            self.window, color=self.text_color, units='pix', pos=(0, 200), height=36,
+            self.window, color=self.text_color, units='norm', pos=(0, -0.18), height=0.05,
             text='We use it to calibrate the eye tracker. Stare at it whenever you see it.'
         ).draw()
 
         psychopy.visual.TextStim(
-            self.window, color=self.text_color, units='pix', pos=(0, 300), height=36,
+            self.window, color=self.text_color, units='norm', pos=(0, -0.28), height=0.05,
             text='Press any key to continue.'
         ).draw()
 
