@@ -1,5 +1,6 @@
 import time
 
+from psychopy import core
 from psychopy import monitors
 from psychopy import visual
 
@@ -53,6 +54,29 @@ print(left_eye_pupil)
 print(right_eye_pupil)
 print('Real time tests passed...')
 time.sleep(1)
+
+# continuous real time data
+real_time_data = []
+tracker.start_recording()
+
+print('Continuous data start time:')
+start_time = core.getTime()
+print(start_time)
+
+while core.getTime() < start_time + 1:  # seconds
+    real_time_data.append(tracker.gaze_data)
+    core.wait(0.01)  # Get a sample every 10 ms
+
+print('Continuous data end time:')
+print(core.getTime())
+
+tracker.stop_recording()
+
+print('Number of samples:')
+print(len(real_time_data))
+
+print('Continuous data head:')
+print(real_time_data[:10])
 
 # test drift correct
 tracker.drift_correct()
