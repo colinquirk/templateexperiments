@@ -68,6 +68,17 @@ class TestTemplateMethods(unittest.TestCase):
                                                                {'1': 4, '2': 5, '3': 6},
                                                                {'1': 7, '2': 8, '3': 9}])
 
+    def test_save_csv(self):
+        self.basic_template.open_csv_data_file()
+        self.basic_template.update_experiment_data([{'1': 4, '2': 5, '3': 6},
+                                                    {'1': 7, '2': 8, '3': 9}])
+        self.basic_template.save_data_to_csv()
+        self.assertTrue(os.path.exists('test_name_000.csv'))
+        with open('test_name_000.csv') as f:
+            text = f.read()
+        self.assertEqual(text, '"1","2","3"\n"4","5","6"\n"7","8","9"\n')
+        os.remove('test_name_000.csv')
+
 
 if __name__ == '__main__':
     unittest.main()
