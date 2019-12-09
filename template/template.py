@@ -194,7 +194,7 @@ class BaseExperiment(object):
         filename = filename + '.txt'
 
         with open(filename, 'w') as info_file:
-            for key, value in self.experiment_info.iteritems():
+            for key, value in self.experiment_info.items():
                 info_file.write(key + ':' + str(value) + '\n')
             info_file.write('\n')
 
