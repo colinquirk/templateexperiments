@@ -27,9 +27,6 @@ BaseExperiment -- All experiments inherit from BaseExperiment. Provides basic
     docs or help(templateexperiments.BaseExperiment) for everything.
 """
 
-from __future__ import division
-from __future__ import print_function
-
 import os
 import pickle
 import sys
