@@ -27,11 +27,9 @@ BaseExperiment -- All experiments inherit from BaseExperiment. Provides basic
     docs or help(templateexperiments.BaseExperiment) for everything.
 """
 
-from __future__ import division
-from __future__ import print_function
-
 import os
 import pickle
+import json
 import sys
 
 import psychopy.monitors
@@ -169,37 +167,37 @@ class BaseExperiment(object):
         return exp_info.OK
 
     def save_experiment_info(self, filename=None):
-        """Writes the info from the dialog box to a text file.
+        """Writes the info from the dialog box to a json file.
 
         Parameters:
         filename -- a string defining the filename with no extension
         """
 
+        ext = '.json'
+
         if filename is None:
             filename = (self.experiment_name + '_' +
                         self.experiment_info['Subject Number'].zfill(3) +
                         '_info')
-        elif filename[-4:] == '.txt':
-            filename = filename[:-4]
+        elif filename[-5:] == ext:
+            filename = filename[:-5]
 
-        if os.path.isfile(filename + '.txt'):
+        if os.path.isfile(filename + ext):
             if self.overwrite_ok is None:
                 self.overwrite_ok = self._confirm_overwrite()
             if not self.overwrite_ok:
                 # If the file exists make a new filename
                 i = 1
                 new_filename = filename + '(' + str(i) + ')'
-                while os.path.isfile(new_filename + '.txt'):
+                while os.path.isfile(new_filename + ext):
                     i += 1
                     new_filename = filename + '(' + str(i) + ')'
                 filename = new_filename
 
-        filename = filename + '.txt'
+        filename = filename + ext
 
         with open(filename, 'w') as info_file:
-            for key, value in self.experiment_info.iteritems():
-                info_file.write(key + ':' + str(value) + '\n')
-            info_file.write('\n')
+            info_file.write(json.dumps(self.experiment_info))
 
     def open_csv_data_file(self, data_filename=None):
         """Opens the csv file and writes the header.
@@ -247,6 +245,8 @@ class BaseExperiment(object):
             experiment_data. Only keys that are included in data_fields should
             be included, as only those will be written in save_data_to_csv()
         """
+        if not isinstance(new_data, list):
+            raise TypeError('Experiment data must be type list.')
 
         self.experiment_data.extend(new_data)
 
@@ -305,10 +305,11 @@ class BaseExperiment(object):
         if additional_fields_dict is not None:
             pickle_dict.update(additional_fields_dict)
 
-        pickle.dump(pickle_dict, open(
-            self.experiment_name + '_' +
-            self.experiment_info['Subject Number'].zfill(3) + '.pickle',
-            'wb+'))
+        pickle_filename = (self.experiment_name + '_' +
+                           self.experiment_info['Subject Number'].zfill(3) + '.pickle')
+
+        with open(pickle_filename, 'wb+') as pickle_file:
+            pickle.dump(pickle_dict, pickle_file)
 
     def open_window(self, **kwargs):
         """Opens the psychopy window.
