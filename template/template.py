@@ -29,6 +29,7 @@ BaseExperiment -- All experiments inherit from BaseExperiment. Provides basic
 
 import os
 import pickle
+import json
 import sys
 
 import psychopy.monitors
@@ -166,37 +167,37 @@ class BaseExperiment(object):
         return exp_info.OK
 
     def save_experiment_info(self, filename=None):
-        """Writes the info from the dialog box to a text file.
+        """Writes the info from the dialog box to a json file.
 
         Parameters:
         filename -- a string defining the filename with no extension
         """
 
+        ext = '.json'
+
         if filename is None:
             filename = (self.experiment_name + '_' +
                         self.experiment_info['Subject Number'].zfill(3) +
                         '_info')
-        elif filename[-4:] == '.txt':
-            filename = filename[:-4]
+        elif filename[-5:] == ext:
+            filename = filename[:-5]
 
-        if os.path.isfile(filename + '.txt'):
+        if os.path.isfile(filename + ext):
             if self.overwrite_ok is None:
                 self.overwrite_ok = self._confirm_overwrite()
             if not self.overwrite_ok:
                 # If the file exists make a new filename
                 i = 1
                 new_filename = filename + '(' + str(i) + ')'
-                while os.path.isfile(new_filename + '.txt'):
+                while os.path.isfile(new_filename + ext):
                     i += 1
                     new_filename = filename + '(' + str(i) + ')'
                 filename = new_filename
 
-        filename = filename + '.txt'
+        filename = filename + ext
 
         with open(filename, 'w') as info_file:
-            for key, value in self.experiment_info.items():
-                info_file.write(key + ':' + str(value) + '\n')
-            info_file.write('\n')
+            info_file.write(json.dumps(self.experiment_info))
 
     def open_csv_data_file(self, data_filename=None):
         """Opens the csv file and writes the header.
