@@ -305,10 +305,11 @@ class BaseExperiment(object):
         if additional_fields_dict is not None:
             pickle_dict.update(additional_fields_dict)
 
-        pickle.dump(pickle_dict, open(
-            self.experiment_name + '_' +
-            self.experiment_info['Subject Number'].zfill(3) + '.pickle',
-            'wb+'))
+        pickle_filename = (self.experiment_name + '_' +
+                           self.experiment_info['Subject Number'].zfill(3) + '.pickle')
+
+        with open(pickle_filename, 'wb+') as pickle_file:
+            pickle.dump(pickle_dict, pickle_file)
 
     def open_window(self, **kwargs):
         """Opens the psychopy window.
