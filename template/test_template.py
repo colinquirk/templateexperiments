@@ -1,4 +1,5 @@
 import unittest
+import os
 import template
 
 
@@ -6,6 +7,8 @@ class TestTemplateMethods(unittest.TestCase):
     def setUp(self):
         self.basic_template = template.BaseExperiment(experiment_name='test_name',
                                                       data_fields=['1', '2', '3'])
+
+        self.basic_template.experiment_info['Subject Number'] = '0'
 
     def assertListAlmostEqual(self, list1, list2, tol=1e-5):
         self.assertEqual(len(list1), len(list2))
@@ -23,6 +26,14 @@ class TestTemplateMethods(unittest.TestCase):
                                    [1.0, -1.0, -1.0])  # Red
         self.assertListAlmostEqual(template.convert_color_value([188, 108, 14]),
                                    [0.47, -0.15, -0.89])  # Brown
+
+    def test_save_experiment_info(self):
+        self.basic_template.save_experiment_info()
+        self.assertTrue(os.path.exists('test_name_000_info.txt'))
+        with open('test_name_000_info.txt') as f:
+            text = f.read()
+        self.assertEqual(text, 'Subject Number:0\n\n')
+        os.remove('test_name_000_info.txt')
 
 
 if __name__ == '__main__':
