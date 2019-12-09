@@ -2,6 +2,7 @@ import unittest
 import os
 import json
 import template
+import pickle
 
 
 class TestTemplateMethods(unittest.TestCase):
@@ -78,6 +79,34 @@ class TestTemplateMethods(unittest.TestCase):
             text = f.read()
         self.assertEqual(text, '"1","2","3"\n"4","5","6"\n"7","8","9"\n')
         os.remove('test_name_000.csv')
+
+    def test_save_pickle(self):
+        self.basic_template.open_csv_data_file()
+        self.basic_template.update_experiment_data([{'1': 4, '2': 5, '3': 6},
+                                                    {'1': 7, '2': 8, '3': 9}])
+        self.basic_template.save_experiment_pickle()
+
+        self.assertTrue(os.path.exists('test_name_000.pickle'))
+        with open('test_name_000.pickle', 'rb') as f:
+            pickle_data = pickle.load(f)
+
+        expected_pickle_data = {
+            'experiment_name': 'test_name',
+            'data_fields': ['1', '2', '3'],
+            'bg_color': [0.0, 0.0, 0.0],
+            'monitor_name': 'Experiment Monitor',
+            'monitor_width': 53,
+            'monitor_distance': 70,
+            'experiment_data': [{'1': 4, '2': 5, '3': 6}, {'1': 7, '2': 8, '3': 9}],
+            'experiment_data_filename': 'test_name_000.csv',
+            'data_lines_written': 0,
+            'experiment_info': {'Subject Number': '0'}
+        }
+
+        self.assertDictEqual(pickle_data, expected_pickle_data)
+
+        os.remove('test_name_000.csv')
+        os.remove('test_name_000.pickle')
 
 
 if __name__ == '__main__':
