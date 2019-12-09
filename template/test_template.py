@@ -58,6 +58,15 @@ class TestTemplateMethods(unittest.TestCase):
         self.assertEqual(text, '"1","2","3"\n')
         os.remove('different_data_file.csv')
 
+    def test_update_exp_data(self):
+        self.assertEqual(self.basic_template.experiment_data, [])
+        self.basic_template.update_experiment_data([{'1': 1, '2': 2, '3': 3}])
+        self.assertEqual(self.basic_template.experiment_data, [{'1': 1, '2': 2, '3': 3}])
+        self.basic_template.update_experiment_data([{'1': 4, '2': 5, '3': 6},
+                                                    {'1': 7, '2': 8, '3': 9}])
+        self.assertEqual(self.basic_template.experiment_data, [{'1': 1, '2': 2, '3': 3},
+                                                               {'1': 4, '2': 5, '3': 6},
+                                                               {'1': 7, '2': 8, '3': 9}])
 
 
 if __name__ == '__main__':
