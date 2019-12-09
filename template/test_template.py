@@ -1,5 +1,6 @@
 import unittest
 import os
+import json
 import template
 
 
@@ -29,11 +30,34 @@ class TestTemplateMethods(unittest.TestCase):
 
     def test_save_experiment_info(self):
         self.basic_template.save_experiment_info()
-        self.assertTrue(os.path.exists('test_name_000_info.txt'))
-        with open('test_name_000_info.txt') as f:
+        self.assertTrue(os.path.exists('test_name_000_info.json'))
+        with open('test_name_000_info.json') as f:
+            json_dict = json.loads(f.read())
+        self.assertDictEqual(json_dict, {'Subject Number': '0'})
+        os.remove('test_name_000_info.json')
+
+        self.basic_template.save_experiment_info(filename='different_filename.json')
+        self.assertTrue(os.path.exists('different_filename.json'))
+        with open('different_filename.json') as f:
+            json_dict = json.loads(f.read())
+        self.assertDictEqual(json_dict, {'Subject Number': '0'})
+        os.remove('different_filename.json')
+
+    def test_open_csv(self):
+        self.basic_template.open_csv_data_file()
+        self.assertTrue(os.path.exists('test_name_000.csv'))
+        with open('test_name_000.csv') as f:
             text = f.read()
-        self.assertEqual(text, 'Subject Number:0\n\n')
-        os.remove('test_name_000_info.txt')
+        self.assertEqual(text, '"1","2","3"\n')
+        os.remove('test_name_000.csv')
+
+        self.basic_template.open_csv_data_file(data_filename='different_data_file.csv')
+        self.assertTrue(os.path.exists('different_data_file.csv'))
+        with open('different_data_file.csv') as f:
+            text = f.read()
+        self.assertEqual(text, '"1","2","3"\n')
+        os.remove('different_data_file.csv')
+
 
 
 if __name__ == '__main__':
