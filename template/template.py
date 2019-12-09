@@ -245,6 +245,8 @@ class BaseExperiment(object):
             experiment_data. Only keys that are included in data_fields should
             be included, as only those will be written in save_data_to_csv()
         """
+        if not isinstance(new_data, list):
+            raise TypeError('Experiment data must be type list.')
 
         self.experiment_data.extend(new_data)
 
