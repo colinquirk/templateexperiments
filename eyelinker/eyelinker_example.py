@@ -12,7 +12,11 @@ monitor.setSizePix([1920, 1080])
 
 win = visual.Window([800, 600], units="pix", color=[0, 0, 0], monitor=monitor)
 
-# Will default to MockEyeLinker if no tracker connected
+text_stim = visual.TextStim(win, 'Beginning EyeLinker test...')
+text_stim.draw()
+win.flip()
+
+# Will attempt to default to MockEyeLinker if no tracker connected
 tracker = eyelinker.EyeLinker(win, 'test.edf', 'BOTH')
 
 # initialize
@@ -22,6 +26,7 @@ tracker.initialize_tracker()
 tracker.send_calibration_settings()
 print('Initalization tests passed...')
 time.sleep(1)
+win.flip()
 
 # most basic functionality
 tracker.display_eyetracking_instructions()
