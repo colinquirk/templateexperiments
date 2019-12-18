@@ -9,7 +9,7 @@ import psychopy.event
 import psychopy.visual
 
 
-class EyeLinker(object):
+class EyeLinker:
     def __init__(self, window, filename, eye):
         if len(filename) > 12:
             raise ValueError(

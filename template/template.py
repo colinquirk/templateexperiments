@@ -50,7 +50,7 @@ def convert_color_value(color):
     return [round(((n/127.5)-1), 2) for n in color]
 
 
-class BaseExperiment(object):
+class BaseExperiment:
     """Basic experiment class providing functionality in all experiments
 
     Parameters:
