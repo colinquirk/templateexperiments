@@ -9,7 +9,64 @@ import psychopy.event
 import psychopy.visual
 
 
-class EyeLinker:
+def try_connection(window):
+    print('Attempting to connect to eye tracker...')
+    try:
+        pl.EyeLink()
+        return True, None
+    except RuntimeError as e:
+        return False, e
+
+
+def display_not_connected_text(window):
+    warning_text = ('WARNING: Eyetracker not connected.\n\n'
+                    'Press "R" to retry connecting\n'
+                    'Press "Q" to quit\n'
+                    'Press "D" to continue in debug mode')
+
+    bg = psychopy.visual.Rect(window, units='norm', width=2, height=2, fillColor=(0.0, 0.0, 0.0))
+    text_stim = psychopy.visual.TextStim(window, warning_text, color=(1.0, 1.0, 1.0))
+
+    bg.draw()
+    text_stim.draw()
+
+    window.flip(clearBuffer=False)
+
+
+def get_connection_failure_response():
+    return psychopy.event.waitKeys(keyList=['r', 'q', 'd'])[0]
+
+
+# A factory function disguised as a class
+def EyeLinker(window, filename, eye):
+    connected, e = try_connection(window)
+
+    if connected:
+        return ConnectedEyeLinker(window, filename, eye)
+    else:
+        display_not_connected_text(window)
+
+    response = get_connection_failure_response()
+
+    while response == 'r':
+        connected, e = try_connection(window)
+        if connected:
+            window.flip()
+            return ConnectedEyeLinker(window, filename, eye)
+        else:
+            print('Could not connect to tracker. Select again.')
+            response = get_connection_failure_response()
+
+    if response == 'q':
+        window.flip()
+        raise e
+    elif response == 'd':
+        window.flip()
+        print('Continuing with mock eyetracking. Eyetracking data will not be saved!')
+        return MockEyeLinker(window, filename, eye)
+
+
+class ConnectedEyeLinker:
     def __init__(self, window, filename, eye):
         if len(filename) > 12:
             raise ValueError(
