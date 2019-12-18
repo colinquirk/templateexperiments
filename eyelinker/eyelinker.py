@@ -260,3 +260,39 @@ class EyeLinker:
     def close_connection(self):
         self.tracker.close()
         pl.closeGraphics()
+
+
+# Creates a mock object to be used if tracker doesn't connect for debug purposes
+method_list = [fn_name for fn_name in dir(ConnectedEyeLinker)
+               if callable(getattr(ConnectedEyeLinker, fn_name)) and not fn_name.startswith("__")]
+
+
+def mock_func(*args, **kwargs):
+    pass
+
+
+class MockEyeLinker:
+    def __init__(self, window, filename, eye):
+        self.window = window
+        self.edf_filename = filename
+        self.edf_open = False
+        self.eye = eye
+        self.resolution = tuple(window.size)
+        self.tracker = None
+        self.genv = None
+        self.gaze_data = (None, None)
+        self.pupil_size = (None, None)
+
+        if all(i >= 0.5 for i in self.window.color):
+            self.text_color = (-1, -1, -1)
+        else:
+            self.text_color = (1, 1, 1)
+
+        for fn_name in method_list:
+            setattr(self, fn_name, mock_func)
+
+        # Decorator must return a function
+        def record(*args, **kwargs):
+            return mock_func
+
+        self.record = record
