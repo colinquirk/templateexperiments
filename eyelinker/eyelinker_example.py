@@ -11,6 +11,8 @@ monitor = monitors.Monitor('test_monitor', width=53, distance=70)
 monitor.setSizePix([1920, 1080])
 
 win = visual.Window([800, 600], units="pix", color=[0, 0, 0], monitor=monitor)
+
+# Will default to MockEyeLinker if no tracker connected
 tracker = eyelinker.EyeLinker(win, 'test.edf', 'BOTH')
 
 # initialize
