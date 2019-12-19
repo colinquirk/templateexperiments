@@ -86,6 +86,7 @@ class ConnectedEyeLinker:
         self.resolution = tuple(window.size)
         self.tracker = pl.EyeLink()
         self.genv = PsychoPyCustomDisplay(self.window, self.tracker)
+        self.mock = False
 
         if all(i >= 0.5 for i in self.window.color):
             self.text_color = (-1, -1, -1)
@@ -339,6 +340,7 @@ class MockEyeLinker:
         self.genv = None
         self.gaze_data = (None, None)
         self.pupil_size = (None, None)
+        self.mock = True
 
         if all(i >= 0.5 for i in self.window.color):
             self.text_color = (-1, -1, -1)
