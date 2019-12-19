@@ -66,8 +66,13 @@ class PyPlugger:
         return wrapped_func
 
     @staticmethod
-    def send_event(event):
+    def start_event(event):
         psychopy.parallel.setData(event)
+
+    @staticmethod
+    def end_event():
+        """To be called some time after an event has been sent"""
+        psychopy.parallel.setData(0)
 
     def display_eeg_instructions(self, eeg_instruction_text=None):
         self.window.flip()
