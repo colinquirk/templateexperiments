@@ -262,10 +262,10 @@ class ConnectedEyeLinker:
         except RuntimeError as e:
             print(e.message)
 
-    def record(self, trial_func):
+    def record(self, to_record_func):
         def wrapped_func():
             self.start_recording()
-            trial_func()
+            to_record_func()
             self.stop_recording()
         return wrapped_func
 
