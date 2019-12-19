@@ -67,7 +67,7 @@ def EyeLinker(window, filename, eye):
 
 
 class ConnectedEyeLinker:
-    def __init__(self, window, filename, eye):
+    def __init__(self, window, filename, eye, text_color=None):
         if len(filename) > 12:
             raise ValueError(
                 'EDF filename must be at most 12 characters long including the extension.')
@@ -88,10 +88,13 @@ class ConnectedEyeLinker:
         self.genv = PsychoPyCustomDisplay(self.window, self.tracker)
         self.mock = False
 
-        if all(i >= 0.5 for i in self.window.color):
-            self.text_color = (-1, -1, -1)
+        if text_color is None:
+            if all(i >= 0.5 for i in self.window.color):
+                self.text_color = (-1, -1, -1)
+            else:
+                self.text_color = (1, 1, 1)
         else:
-            self.text_color = (1, 1, 1)
+            self.text_color = text_color
 
     def initialize_graphics(self):
         self.set_offline_mode()
@@ -330,7 +333,7 @@ def mock_func(*args, **kwargs):
 
 
 class MockEyeLinker:
-    def __init__(self, window, filename, eye):
+    def __init__(self, window, filename, eye, text_color=None):
         self.window = window
         self.edf_filename = filename
         self.edf_open = False
@@ -342,10 +345,13 @@ class MockEyeLinker:
         self.pupil_size = (None, None)
         self.mock = True
 
-        if all(i >= 0.5 for i in self.window.color):
-            self.text_color = (-1, -1, -1)
+        if text_color is None:
+            if all(i >= 0.5 for i in self.window.color):
+                self.text_color = (-1, -1, -1)
+            else:
+                self.text_color = (1, 1, 1)
         else:
-            self.text_color = (1, 1, 1)
+            self.text_color = text_color
 
         for fn_name in method_list:
             setattr(self, fn_name, mock_func)
