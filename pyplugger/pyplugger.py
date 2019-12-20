@@ -28,8 +28,6 @@ class PyPlugger:
             self.text_color = text_color
 
     def initialize_session(self, experiment_name, subject_number, timeout=5):
-        ## TODO
-        ## Check for file
         messages = ['1' + self.config_file,
                     '2' + str(experiment_name),
                     '3' + str(subject_number),
