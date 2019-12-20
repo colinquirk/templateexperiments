@@ -381,3 +381,21 @@ class BaseExperiment:
             self.experiment_window.close()
         print('The experiment has ended.')
         sys.exit(0)
+
+
+class EyeTrackingEEGExperiment(BaseExperiment):
+    def __init__(self, *args, tracker=None, eeg=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.tracker = tracker
+        self.eeg = eeg
+
+    def send_synced_event(self, code, keyword="SYNC", end_eeg_event=False):
+        if keyword is None:
+            message = str(code)
+        else:
+            message = keyword + ' ' + str(code)
+
+        self.eeg.start_event(code)
+        self.tracker.send_message(message)
+        if end_eeg_event:
+            self.eeg.end_eeg_event()
