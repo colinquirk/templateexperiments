@@ -5,3 +5,7 @@ template/template.py -- This module provides a class that all of my experiments 
 eyelinker/eyelinker.py -- This is a wrapper for pylink (from SR research) that makes it easy to control basic eyetracking experiments using eyelink trackers.
 
 eyelinker/PsychoPyCustomDisplay.py -- This is a module that connects psychopy and pylink so that eyelink can show graphics, play sounds, etc. If you use eyelinker, have it avaliable on the path and you will never need to use it directly.
+
+pyplugger/pyplugger.py -- Various functions for controlling a PyCorder session from pyschopy
+
+pyplugger/inpout32.dll -- Required for working with parallel ports

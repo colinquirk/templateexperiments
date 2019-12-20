@@ -9,8 +9,65 @@ import psychopy.event
 import psychopy.visual
 
 
-class EyeLinker:
-    def __init__(self, window, filename, eye):
+def try_connection(window):
+    print('Attempting to connect to eye tracker...')
+    try:
+        pl.EyeLink()
+        return True, None
+    except RuntimeError as e:
+        return False, e
+
+
+def display_not_connected_text(window):
+    warning_text = ('WARNING: Eyetracker not connected.\n\n'
+                    'Press "R" to retry connecting\n'
+                    'Press "Q" to quit\n'
+                    'Press "D" to continue in debug mode')
+
+    bg = psychopy.visual.Rect(window, units='norm', width=2, height=2, fillColor=(0.0, 0.0, 0.0))
+    text_stim = psychopy.visual.TextStim(window, warning_text, color=(1.0, 1.0, 1.0))
+
+    bg.draw()
+    text_stim.draw()
+
+    window.flip(clearBuffer=False)
+
+
+def get_connection_failure_response():
+    return psychopy.event.waitKeys(keyList=['r', 'q', 'd'])[0]
+
+
+# A factory function disguised as a class
+def EyeLinker(window, filename, eye):
+    connected, e = try_connection(window)
+
+    if connected:
+        return ConnectedEyeLinker(window, filename, eye)
+    else:
+        display_not_connected_text(window)
+
+    response = get_connection_failure_response()
+
+    while response == 'r':
+        connected, e = try_connection(window)
+        if connected:
+            window.flip()
+            return ConnectedEyeLinker(window, filename, eye)
+        else:
+            print('Could not connect to tracker. Select again.')
+            response = get_connection_failure_response()
+
+    if response == 'q':
+        window.flip()
+        raise e
+    elif response == 'd':
+        window.flip()
+        print('Continuing with mock eyetracking. Eyetracking data will not be saved!')
+        return MockEyeLinker(window, filename, eye)
+
+
+class ConnectedEyeLinker:
+    def __init__(self, window, filename, eye, text_color=None):
         if len(filename) > 12:
             raise ValueError(
                 'EDF filename must be at most 12 characters long including the extension.')
@@ -29,11 +86,15 @@ class EyeLinker:
         self.resolution = tuple(window.size)
         self.tracker = pl.EyeLink()
         self.genv = PsychoPyCustomDisplay(self.window, self.tracker)
+        self.mock = False
 
-        if all(i >= 0.5 for i in self.window.color):
-            self.text_color = (-1, -1, -1)
+        if text_color is None:
+            if all(i >= 0.5 for i in self.window.color):
+                self.text_color = (-1, -1, -1)
+            else:
+                self.text_color = (1, 1, 1)
         else:
-            self.text_color = (1, 1, 1)
+            self.text_color = text_color
 
     def initialize_graphics(self):
         self.set_offline_mode()
@@ -205,10 +266,10 @@ class EyeLinker:
         except RuntimeError as e:
             print(e.message)
 
-    def record(self, trial_func):
+    def record(self, to_record_func):
         def wrapped_func():
             self.start_recording()
-            trial_func()
+            to_record_func()
             self.stop_recording()
         return wrapped_func
 
@@ -260,3 +321,43 @@ class EyeLinker:
     def close_connection(self):
         self.tracker.close()
         pl.closeGraphics()
+
+
+# Creates a mock object to be used if tracker doesn't connect for debug purposes
+method_list = [fn_name for fn_name in dir(ConnectedEyeLinker)
+               if callable(getattr(ConnectedEyeLinker, fn_name)) and not fn_name.startswith("__")]
+
+
+def mock_func(*args, **kwargs):
+    pass
+
+
+class MockEyeLinker:
+    def __init__(self, window, filename, eye, text_color=None):
+        self.window = window
+        self.edf_filename = filename
+        self.edf_open = False
+        self.eye = eye
+        self.resolution = tuple(window.size)
+        self.tracker = None
+        self.genv = None
+        self.gaze_data = (None, None)
+        self.pupil_size = (None, None)
+        self.mock = True
+
+        if text_color is None:
+            if all(i >= 0.5 for i in self.window.color):
+                self.text_color = (-1, -1, -1)
+            else:
+                self.text_color = (1, 1, 1)
+        else:
+            self.text_color = text_color
+
+        for fn_name in method_list:
+            setattr(self, fn_name, mock_func)
+
+        # Decorator must return a function
+        def record(*args, **kwargs):
+            return mock_func
+
+        self.record = record
