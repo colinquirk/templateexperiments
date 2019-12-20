@@ -58,13 +58,6 @@ class PyPlugger:
         self.socket.send(cmd)
         time.sleep(delay)  # Ensure recording has ended
 
-    def record(self, to_record_func):
-        def wrapped_func():
-            self.start_recording()
-            to_record_func()
-            self.stop_recording()
-        return wrapped_func
-
     @staticmethod
     def start_event(event):
         psychopy.parallel.setData(event)
