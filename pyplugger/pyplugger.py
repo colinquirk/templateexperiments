@@ -7,8 +7,9 @@ import psychopy.visual
 
 
 class PyPlugger:
-    def __init__(self, config_file='default.xml', tcp_ip="100.1.1.3",
+    def __init__(self, window, config_file, tcp_ip="100.1.1.3",
                  tcp_port=6700, parallel_port_address=53328, text_color=None):
+        self.window = window
         self.config_file = config_file
         self.tcp_ip = tcp_ip
         self.tcp_port = tcp_port
@@ -27,9 +28,11 @@ class PyPlugger:
             self.text_color = text_color
 
     def initialize_session(self, experiment_name, subject_number, timeout=5):
+        ## TODO
+        ## Check for file
         messages = ['1' + self.config_file,
-                    '2' + experiment_name,
-                    '3' + subject_number,
+                    '2' + str(experiment_name),
+                    '3' + str(subject_number),
                     '4']
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -37,16 +40,16 @@ class PyPlugger:
         self.socket.connect((self.tcp_ip, self.tcp_port))
 
         for tcp_message in messages:
-            self.socket.send(tcp_message)
+            self.socket.send(tcp_message.encode())
             time.sleep(1)
 
     def switch_mode(self, mode, delay=5):
-        self.socket.send(mode)
+        self.socket.send(mode.encode())
         self.current_mode = mode
         time.sleep(delay)
 
     def start_recording(self, delay=5):
-        self.socket.send("S")
+        self.socket.send("S".encode())
         time.sleep(delay)  # Ensure recording has started
 
     def stop_recording(self, delay=5, exit_mode=False):
@@ -55,7 +58,7 @@ class PyPlugger:
         else:
             cmd = 'Q'
 
-        self.socket.send(cmd)
+        self.socket.send(cmd.encode())
         time.sleep(delay)  # Ensure recording has ended
 
     @staticmethod
@@ -87,7 +90,7 @@ class PyPlugger:
         psychopy.event.waitKeys()
         self.window.flip()
 
-    def display_interactive_switch_screen(self):
+    def display_interactive_switch_screen(self, require_monitoring=True):
         switch_text = ('You may switch modes now.\n\n'
                        'Press "M" for monitor mode.\n'
                        'Press "I" for impedance mode.\n'
@@ -101,3 +104,8 @@ class PyPlugger:
             response = psychopy.event.waitKeys(keyList=['m', 'i', 'q'])[0]
             if response != 'q':
                 self.switch_mode(response.upper())
+
+        if self.current_mode != 'M':
+            self.switch_mode('M')
+
+        self.window.flip()
