@@ -41,4 +41,6 @@ for i in range(5):
     eeg.end_event()
     time.sleep(0.05)
 eeg.stop_recording(exit_mode=True)
+
+print('Tests complete.')
 time.sleep(5)

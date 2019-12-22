@@ -11,7 +11,7 @@ def try_connection(tcp_ip, tcp_port):
     try:
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((tcp_ip, tcp_port))
         return True, None
-    except RuntimeError as e:
+    except socket.timeout as e:
         return False, e
 
 
@@ -35,12 +35,12 @@ def get_connection_failure_response():
 
 
 # A factory function disguised as a class
-def PyPlugger(self, window, config_file, tcp_ip="100.1.1.3",
+def PyPlugger(window, config_file, tcp_ip="100.1.1.3",
               tcp_port=6700, parallel_port_address=53328, text_color=None):
     connected, e = try_connection(tcp_ip, tcp_port)
 
     if connected:
-        return ConnectedPyPlugger(self, window, config_file, tcp_ip="100.1.1.3",
+        return ConnectedPyPlugger(window, config_file, tcp_ip="100.1.1.3",
                                   tcp_port=6700, parallel_port_address=53328, text_color=None)
     else:
         display_not_connected_text(window)
@@ -48,10 +48,10 @@ def PyPlugger(self, window, config_file, tcp_ip="100.1.1.3",
     response = get_connection_failure_response()
 
     while response == 'r':
-        connected, e = try_connection(window)
+        connected, e = try_connection(tcp_ip, tcp_port)
         if connected:
             window.flip()
-            return ConnectedPyPlugger(self, window, config_file, tcp_ip="100.1.1.3",
+            return ConnectedPyPlugger(window, config_file, tcp_ip="100.1.1.3",
                                       tcp_port=6700, parallel_port_address=53328, text_color=None)
         else:
             print('Could not connect, select again.')
@@ -63,7 +63,7 @@ def PyPlugger(self, window, config_file, tcp_ip="100.1.1.3",
     elif response == 'd':
         window.flip()
         print('Continuing with mock eeg. EEG data will not be saved!')
-        return MockPyPlugger(self, window, config_file, tcp_ip="100.1.1.3",
+        return MockPyPlugger(window, config_file, tcp_ip="100.1.1.3",
                              tcp_port=6700, parallel_port_address=53328, text_color=None)
 
 
