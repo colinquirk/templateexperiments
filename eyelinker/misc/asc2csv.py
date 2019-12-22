@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+"""A short script that will turn an asc file from edf2asc into a csv file."""
+
 import argparse
 import glob
 import os
