@@ -9,7 +9,7 @@ import psychopy.event
 import psychopy.visual
 
 
-def try_connection(window):
+def try_connection():
     print('Attempting to connect to eye tracker...')
     try:
         pl.EyeLink()
