@@ -9,7 +9,7 @@ import psychopy.event
 import psychopy.visual
 
 
-def try_connection(window):
+def try_connection():
     print('Attempting to connect to eye tracker...')
     try:
         pl.EyeLink()
@@ -38,11 +38,11 @@ def get_connection_failure_response():
 
 
 # A factory function disguised as a class
-def EyeLinker(window, filename, eye):
+def EyeLinker(window, filename, eye, text_color=None):
     connected, e = try_connection(window)
 
     if connected:
-        return ConnectedEyeLinker(window, filename, eye)
+        return ConnectedEyeLinker(window, filename, eye, text_color=None)
     else:
         display_not_connected_text(window)
 
@@ -52,7 +52,7 @@ def EyeLinker(window, filename, eye):
         connected, e = try_connection(window)
         if connected:
             window.flip()
-            return ConnectedEyeLinker(window, filename, eye)
+            return ConnectedEyeLinker(window, filename, eye, text_color=None)
         else:
             print('Could not connect to tracker. Select again.')
             response = get_connection_failure_response()
@@ -63,7 +63,7 @@ def EyeLinker(window, filename, eye):
     elif response == 'd':
         window.flip()
         print('Continuing with mock eyetracking. Eyetracking data will not be saved!')
-        return MockEyeLinker(window, filename, eye)
+        return MockEyeLinker(window, filename, eye, text_color=None)
 
 
 class ConnectedEyeLinker:
