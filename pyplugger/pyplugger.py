@@ -6,7 +6,68 @@ import psychopy.parallel
 import psychopy.visual
 
 
-class PyPlugger:
+def try_connection(tcp_ip, tcp_port):
+    print('Attempting to connect to EEG system...')
+    try:
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((tcp_ip, tcp_port))
+        return True, None
+    except RuntimeError as e:
+        return False, e
+
+
+def display_not_connected_text(window):
+    warning_text = ('WARNING: EEG system not connected.\n\n'
+                    'Press "R" to retry connecting\n'
+                    'Press "Q" to quit\n'
+                    'Press "D" to continue in debug mode')
+
+    bg = psychopy.visual.Rect(window, units='norm', width=2, height=2, fillColor=(0.0, 0.0, 0.0))
+    text_stim = psychopy.visual.TextStim(window, warning_text, color=(1.0, 1.0, 1.0))
+
+    bg.draw()
+    text_stim.draw()
+
+    window.flip(clearBuffer=False)
+
+
+def get_connection_failure_response():
+    return psychopy.event.waitKeys(keyList=['r', 'q', 'd'])[0]
+
+
+# A factory function disguised as a class
+def PyPlugger(self, window, config_file, tcp_ip="100.1.1.3",
+              tcp_port=6700, parallel_port_address=53328, text_color=None):
+    connected, e = try_connection(tcp_ip, tcp_port)
+
+    if connected:
+        return ConnectedPyPlugger(self, window, config_file, tcp_ip="100.1.1.3",
+                                  tcp_port=6700, parallel_port_address=53328, text_color=None)
+    else:
+        display_not_connected_text(window)
+
+    response = get_connection_failure_response()
+
+    while response == 'r':
+        connected, e = try_connection(window)
+        if connected:
+            window.flip()
+            return ConnectedPyPlugger(self, window, config_file, tcp_ip="100.1.1.3",
+                                      tcp_port=6700, parallel_port_address=53328, text_color=None)
+        else:
+            print('Could not connect, select again.')
+            response = get_connection_failure_response()
+
+    if response == 'q':
+        window.flip()
+        raise e
+    elif response == 'd':
+        window.flip()
+        print('Continuing with mock eeg. EEG data will not be saved!')
+        return MockPyPlugger(self, window, config_file, tcp_ip="100.1.1.3",
+                             tcp_port=6700, parallel_port_address=53328, text_color=None)
+
+
+class ConnectedPyPlugger:
     def __init__(self, window, config_file, tcp_ip="100.1.1.3",
                  tcp_port=6700, parallel_port_address=53328, text_color=None):
         self.window = window
@@ -107,3 +168,34 @@ class PyPlugger:
             self.switch_mode('M')
 
         self.window.flip()
+
+
+# Creates a mock object to be used if tracker doesn't connect for debug purposes
+method_list = [fn_name for fn_name in dir(ConnectedPyPlugger)
+               if callable(getattr(ConnectedPyPlugger, fn_name)) and not fn_name.startswith("__")]
+
+
+def mock_func(*args, **kwargs):
+    pass
+
+
+class MockPyPlugger:
+    def __init__(self, window, config_file, tcp_ip="100.1.1.3",
+                 tcp_port=6700, parallel_port_address=53328, text_color=None):
+        self.window = window
+        self.config_file = config_file
+        self.tcp_ip = tcp_ip
+        self.tcp_port = tcp_port
+        self.current_mode = None
+        self.socket = None
+
+        if text_color is None:
+            if all(i >= 0.5 for i in self.window.color):
+                self.text_color = (-1, -1, -1)
+            else:
+                self.text_color = (1, 1, 1)
+        else:
+            self.text_color = text_color
+
+        for fn_name in method_list:
+            setattr(self, fn_name, mock_func)
