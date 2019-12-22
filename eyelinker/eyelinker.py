@@ -9,7 +9,7 @@ import psychopy.event
 import psychopy.visual
 
 
-def try_connection():
+def _try_connection():
     print('Attempting to connect to eye tracker...')
     try:
         pl.EyeLink()
@@ -18,7 +18,7 @@ def try_connection():
         return False, e
 
 
-def display_not_connected_text(window):
+def _display_not_connected_text(window):
     warning_text = ('WARNING: Eyetracker not connected.\n\n'
                     'Press "R" to retry connecting\n'
                     'Press "Q" to quit\n'
@@ -33,7 +33,7 @@ def display_not_connected_text(window):
     window.flip(clearBuffer=False)
 
 
-def get_connection_failure_response():
+def _get_connection_failure_response():
     return psychopy.event.waitKeys(keyList=['r', 'q', 'd'])[0]
 
 
@@ -41,21 +41,23 @@ def get_connection_failure_response():
 def EyeLinker(window, filename, eye, text_color=None):
     connected, e = try_connection(window)
 
+    connected, e = _try_connection(window)
+
     if connected:
         return ConnectedEyeLinker(window, filename, eye, text_color=None)
     else:
-        display_not_connected_text(window)
+        _display_not_connected_text(window)
 
-    response = get_connection_failure_response()
+    response = _get_connection_failure_response()
 
     while response == 'r':
-        connected, e = try_connection(window)
+        connected, e = _try_connection(window)
         if connected:
             window.flip()
             return ConnectedEyeLinker(window, filename, eye, text_color=None)
         else:
             print('Could not connect to tracker. Select again.')
-            response = get_connection_failure_response()
+            response = _get_connection_failure_response()
 
     if response == 'q':
         window.flip()
@@ -119,7 +121,7 @@ class ConnectedEyeLinker:
         self.tracker.setLinkSampleFilter(
             "LEFT,RIGHT,GAZE,GAZERES,AREA,STATUS")
 
-    def send_calibration_settings(self, settings=None):
+    def send_tracking_settings(self, settings=None):
         defaults = {
             'automatic_calibration_pacing': 1000,
             'background_color': (0, 0, 0),
@@ -144,7 +146,8 @@ class ConnectedEyeLinker:
         if settings is None:
             settings = {}
 
-        settings.update(defaults)
+        defaults.update(settings)
+        settings = defaults
 
         self.send_command('elcl_select_configuration = %s' % settings['elcl_configuration'])
 
@@ -190,15 +193,13 @@ class ConnectedEyeLinker:
         self.tracker.closeDataFile()
         self.edf_open = False
 
-    def transfer_edf(self, newFilename=None):
-        if not newFilename:
-            newFilename = self.edf_filename
+    def transfer_edf(self, new_filename=None):
 
         # Prevents timeouts due to excessive printing
         sys.stdout = open(os.devnull, "w")
-        self.tracker.receiveDataFile(self.edf_filename, newFilename)
+        self.tracker.receiveDataFile(self.edf_filename, new_filename)
         sys.stdout = sys.__stdout__
-        print(newFilename + ' has been transferred successfully.')
+        print(new_filename + ' has been transferred successfully.')
 
     def setup_tracker(self):
         self.window.flip()
@@ -324,11 +325,11 @@ class ConnectedEyeLinker:
 
 
 # Creates a mock object to be used if tracker doesn't connect for debug purposes
-method_list = [fn_name for fn_name in dir(ConnectedEyeLinker)
+_method_list = [fn_name for fn_name in dir(ConnectedEyeLinker)
                if callable(getattr(ConnectedEyeLinker, fn_name)) and not fn_name.startswith("__")]
 
 
-def mock_func(*args, **kwargs):
+def _mock_func(*args, **kwargs):
     pass
 
 
@@ -353,11 +354,11 @@ class MockEyeLinker:
         else:
             self.text_color = text_color
 
-        for fn_name in method_list:
-            setattr(self, fn_name, mock_func)
+        for fn_name in _method_list:
+            setattr(self, fn_name, _mock_func)
 
         # Decorator must return a function
         def record(*args, **kwargs):
-            return mock_func
+            return _mock_func
 
         self.record = record
