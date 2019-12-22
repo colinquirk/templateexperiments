@@ -1,3 +1,19 @@
+"""A module for managing the interaction between pylink and psychopy.
+
+Author - Colin Quirk (cquirk@uchicago.edu)
+
+Repo: https://github.com/colinquirk/templateexperiments
+
+This class is designed to be used by the eyelinker module. If you use it, you won't need
+to call any of these functions or change any of this code. If you prefer not to use eyelinker,
+simply use `pl.openGraphicsEx(PsychoPyCustomDisplay)` to connect pylink to psychopy. These
+ functions are then called by interactions with the tracker.
+
+Classes:
+PsychoPyCustomDisplay -- inherited from pylink.EyeLinkCustomDisplay. Defines how pylink events
+ should be handled by psychopy.
+"""
+
 import array
 import string
 import warnings
@@ -13,6 +29,34 @@ import psychopy.visual
 
 
 class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
+    """Defines how pylink events should be handled by psychopy.
+
+    For more information, see the pylink documentation for custom displays. These docs
+    are available on the SR Research forum.
+
+    Parameters:
+    window -- A psychopy.visual.Window object
+    tracker -- A pylink.EyeLink object
+
+    Methods:
+    setup_cal_display -- Clears window on calibration setup.
+    exit_cal_display -- Clears window on calibration exit.
+    record_abort_hide -- Not implimented.
+    setup_image_display -- Shows mouse when camera images are visible.
+    image_title -- Updates title text.
+    draw_image_line -- Draws image from buffer.
+    set_image_palette -- Defines image colors.
+    exit_image_display -- Hides mouse when camera images are no longer visible.
+    clear_cal_display -- Clears calibration targets.
+    erase_cal_target -- Clears a individual calibration target.
+    draw_cal_target -- Draws calibration targets.
+    play_beep -- Provides audio feedback.
+    get_input_key -- Handles key events.
+    alert_printf -- Prints warnings, but doesn't kill session.
+    draw_line -- Draws crosshair lines.
+    draw_lozenge -- Draws ovals on image.
+    get_mouse_state -- Gets mouse position.
+    """
     def __init__(self, window, tracker):
         pylink.EyeLinkCustomDisplay.__init__(self)
         self.window = window
@@ -88,22 +132,28 @@ class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
         )
 
     def setup_cal_display(self):
+        """Clears window on calibration setup."""
         self.window.flip()
 
     def exit_cal_display(self):
+        """Clears window on calibration exit."""
         self.window.flip()
 
     def record_abort_hide(self):
+        """Not implimented."""
         pass
 
     def setup_image_display(self, width, height):
+        """Shows mouse when camera images are visible."""
         psychopy.event.Mouse(visible=True)
         self.window.flip()
 
     def image_title(self, title):
+        """Updates title text."""
         self.image_title_object.text = title
 
     def draw_image_line(self, width, line, totlines, buff):
+        """Draws image from buffer."""
         for i in buff:
             if i >= len(self.pal):
                 self.image_buffer.append(self.pal[-1])
@@ -124,6 +174,7 @@ class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
             self.image_buffer = array.array('I')
 
     def set_image_palette(self, r, g, b):
+        """Defines image colors."""
         self.pal = []
 
         # Code taken from pylink docs and altered
@@ -131,16 +182,20 @@ class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
             self.pal.append((b_ << 16) | g_ << 8 | r_)
 
     def exit_image_display(self):
+        """Hides mouse when camera images are no longer visible."""
         psychopy.event.Mouse(visible=False)
         self.window.flip()
 
     def clear_cal_display(self):
+        """Clears calibration targets."""
         self.window.flip()
 
     def erase_cal_target(self):
+        """Clears a individual calibration target."""
         self.window.flip()
 
     def draw_cal_target(self, x, y):
+        """Draws calibration targets."""
         self.cal_target_outer.pos = (x - self.window_adj[0], y - self.window_adj[1])
         self.cal_target_inner.pos = (x - self.window_adj[0], y - self.window_adj[1])
 
@@ -150,9 +205,11 @@ class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
         self.window.flip()
 
     def play_beep(self, beepid):
+        """Provides audio feedback."""
         self.beeps[beepid].play()
 
     def get_input_key(self):
+        """Handles key events."""
         keys = []
 
         for keycode, modifiers in psychopy.event.getKeys(modifiers=True):
@@ -170,9 +227,11 @@ class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
         return keys
 
     def alert_printf(self, msg):
+        """Prints warnings, but doesn't kill session."""
         warnings.warn(msg, RuntimeWarning)
 
     def draw_line(self, x1, y1, x2, y2, colorindex):
+        """Draws crosshair lines."""
         # For some reason the crosshairs need to be fixed like this
         if x1 < 0:
             x1, x2 = x1 + 767, x2 + 767
@@ -192,6 +251,7 @@ class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
         ).draw()
 
     def draw_lozenge(self, x, y, width, height, colorindex):
+        """Draws ovals on image."""
         if colorindex in self.colors:
             color = self.colors[colorindex]
         else:
@@ -205,6 +265,7 @@ class PsychoPyCustomDisplay(pylink.EyeLinkCustomDisplay):
             self.window, units='pix', lineColor=color, pos=(x, y), size=(width, height)).draw()
 
     def get_mouse_state(self):
+        """Gets mouse position."""
         mouse_pos = self.mouse.getPos()
         mouse_pos = psychopy.tools.monitorunittools.convertToPix(
             mouse_pos, [0, 0], self.window.units, self.window
