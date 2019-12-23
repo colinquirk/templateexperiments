@@ -1,3 +1,24 @@
+"""A module for managing the interaction between pylink and psychopy.
+
+Author - Colin Quirk (cquirk@uchicago.edu)
+
+Repo: https://github.com/colinquirk/templateexperiments
+
+Eyelinker provides a few high level functions designed to make it a bit easier to do common tasks.
+For a high level overview, see the readme and example script.
+
+Functions:
+EyeLinker -- This is a factory function that returns either a ConnectedEyeLinker or, if a
+ connection cannot be made, a MockEyeLinker. All other functions are internal.
+
+Classes:
+ConnectedEyeLinker -- Returned if a connection is possible. Provides high-level functionality
+ on top of pylink.
+MockEyelinker -- Has the same attributes and methods as ConnectedEyeLinker, but all functions
+ simply pass and no checks are made to the attributes. This makes it easier to debug the psychopy
+ code if there is no tracker connected.
+"""
+
 import os
 import sys
 import time
