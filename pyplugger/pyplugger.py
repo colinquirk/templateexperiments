@@ -1,3 +1,21 @@
+"""A module for managing the interaction between pycorder and psychopy.
+
+Author - Colin Quirk (cquirk@uchicago.edu)
+
+Repo: https://github.com/colinquirk/templateexperiments
+
+Pyplugger provides functions to control EEG recordings through the BrainVision software pycorder.
+In order to use pylugger, a network connection between the computer running pycorder and the
+ computer running psychopy.
+
+Important note: You cannot open pycorder normally, you must open it in remote mode for this
+ module to work. See the pycorder documentation for notes about how to do this.
+
+
+
+"""
+
+
 import socket
 import time
 
@@ -6,7 +24,7 @@ import psychopy.parallel
 import psychopy.visual
 
 
-def try_connection(tcp_ip, tcp_port):
+def _try_connection(tcp_ip, tcp_port):
     print('Attempting to connect to EEG system...')
     try:
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((tcp_ip, tcp_port))
@@ -15,7 +33,7 @@ def try_connection(tcp_ip, tcp_port):
         return False, e
 
 
-def display_not_connected_text(window):
+def _display_not_connected_text(window):
     warning_text = ('WARNING: EEG system not connected.\n\n'
                     'Press "R" to retry connecting\n'
                     'Press "Q" to quit\n'
@@ -30,32 +48,32 @@ def display_not_connected_text(window):
     window.flip(clearBuffer=False)
 
 
-def get_connection_failure_response():
+def _get_connection_failure_response():
     return psychopy.event.waitKeys(keyList=['r', 'q', 'd'])[0]
 
 
 # A factory function disguised as a class
 def PyPlugger(window, config_file, tcp_ip="100.1.1.3",
               tcp_port=6700, parallel_port_address=53328, text_color=None):
-    connected, e = try_connection(tcp_ip, tcp_port)
+    connected, e = _try_connection(tcp_ip, tcp_port)
 
     if connected:
         return ConnectedPyPlugger(window, config_file, tcp_ip="100.1.1.3",
                                   tcp_port=6700, parallel_port_address=53328, text_color=None)
     else:
-        display_not_connected_text(window)
+        _display_not_connected_text(window)
 
-    response = get_connection_failure_response()
+    response = _get_connection_failure_response()
 
     while response == 'r':
-        connected, e = try_connection(tcp_ip, tcp_port)
+        connected, e = _try_connection(tcp_ip, tcp_port)
         if connected:
             window.flip()
             return ConnectedPyPlugger(window, config_file, tcp_ip="100.1.1.3",
                                       tcp_port=6700, parallel_port_address=53328, text_color=None)
         else:
             print('Could not connect, select again.')
-            response = get_connection_failure_response()
+            response = _get_connection_failure_response()
 
     if response == 'q':
         window.flip()
