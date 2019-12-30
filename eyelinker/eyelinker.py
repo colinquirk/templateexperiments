@@ -45,7 +45,11 @@ def _try_connection():
 
 
 def _display_not_connected_text(window):
-    """Displays the text objects describing available interactions."""
+    """Displays the text objects describing available interactions.
+    
+    Parameters:
+    window -- a psychopy.visual.Window
+    """
     warning_text = ('WARNING: Eyetracker not connected.\n\n'
                     'Press "R" to retry connecting\n'
                     'Press "Q" to quit\n'
