@@ -82,7 +82,7 @@ def PyPlugger(window, config_file, tcp_ip="100.1.1.3",
 
     Parameters:
     window -- A psychopy.visual.Window object
-    config_file -- An xml config file created by pycorder
+    config_file -- A path to an xml config file created by pycorder on the pycorder computer
     tcp_ip -- the ip address of the pycorder computer
     tcp_port -- the port to connect to, should always be 6700
     parallel_port_address -- the address of the parallel port as required by psychopy.parallel
