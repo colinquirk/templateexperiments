@@ -11,6 +11,8 @@ Important notes:
 -In order to send events, you must have a parallel port set up. See the documentation about psychopy.parallel
 for more information.
 
+inpout32.dll -- place this file in the same directory as your experiment code as it is necessary for the parallel port.
+
 PyPlugger -- If able to connect, returns a ConnectedPyPlugger
 
 See pyplugger_example.py for a tutorial and the source code for details about optional arguments.
