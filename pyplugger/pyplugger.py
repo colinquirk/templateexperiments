@@ -94,6 +94,7 @@ class ConnectedPyPlugger:
         self.tcp_port = tcp_port
         self.current_mode = None
         self.socket = None
+        self.mock = False
 
         psychopy.parallel.setPortAddress(parallel_port_address)
         psychopy.parallel.setData(0)
@@ -182,6 +183,7 @@ class ConnectedPyPlugger:
             if response != 'q':
                 self.switch_mode(response.upper())
 
+        if require_monitoring:
         if self.current_mode != 'M':
             self.switch_mode('M')
 
@@ -193,7 +195,7 @@ method_list = [fn_name for fn_name in dir(ConnectedPyPlugger)
                if callable(getattr(ConnectedPyPlugger, fn_name)) and not fn_name.startswith("__")]
 
 
-def mock_func(*args, **kwargs):
+def _mock_func(*args, **kwargs):
     pass
 
 
@@ -206,6 +208,7 @@ class MockPyPlugger:
         self.tcp_port = tcp_port
         self.current_mode = None
         self.socket = None
+        self.mock = True
 
         if text_color is None:
             if all(i >= 0.5 for i in self.window.color):
@@ -216,4 +219,4 @@ class MockPyPlugger:
             self.text_color = text_color
 
         for fn_name in method_list:
-            setattr(self, fn_name, mock_func)
+            setattr(self, fn_name, _mock_func)
