@@ -46,7 +46,7 @@ def _try_connection():
 
 def _display_not_connected_text(window):
     """Displays the text objects describing available interactions.
-    
+
     Parameters:
     window -- a psychopy.visual.Window
     """
@@ -79,7 +79,7 @@ def EyeLinker(window, filename, eye, text_color=None):
     text_color -- Defined using window color to black or white, but can be overwritten by
      providing a (r,g,b) tuple with values between -1 and 1
     """
-    connected, e = _try_connection(window)
+    connected, e = _try_connection()
 
     if connected:
         return ConnectedEyeLinker(window, filename, eye, text_color=None)
@@ -89,7 +89,7 @@ def EyeLinker(window, filename, eye, text_color=None):
     response = _get_connection_failure_response()
 
     while response == 'r':
-        connected, e = _try_connection(window)
+        connected, e = _try_connection()
         if connected:
             window.flip()
             return ConnectedEyeLinker(window, filename, eye, text_color=None)
