@@ -119,27 +119,31 @@ class BaseExperiment:
         vars(self).update(kwargs)  # Add anything else you want
 
     @staticmethod
-    def _confirm_overwrite():
+    def _confirm_overwrite(screen=0):
         """Private, static method that shows a dialog asking if a file can be
         overwritten.
 
         Returns a bool describing if the file should be overwritten.
+
+        Parameters:
+        screen -- an int describing the screen you want the dialog to appear on
         """
 
         overwrite_dlg = psychopy.gui.Dlg(
             'Overwrite?', labelButtonOK='Overwrite',
-            labelButtonCancel='New File', screen=1)
+            labelButtonCancel='New File', screen=screen)
         overwrite_dlg.addText('File already exists. Overwrite?')
         overwrite_dlg.show()
 
         return overwrite_dlg.OK
 
-    def get_experiment_info_from_dialog(self, additional_fields_dict=None):
+    def get_experiment_info_from_dialog(self, additional_fields_dict=None, screen=0):
         """Gets subject info from dialog box.
 
         Parameters:
         additional_fields_dict -- An optional dictionary containing more
             fields for the dialog box and output dictionary.
+        screen -- an int describing the screen you want the dialog to appear on
         """
 
         self.experiment_info = {'Subject Number': '0',
@@ -160,7 +164,7 @@ class BaseExperiment:
                    'Unique Subject Identifier'
                    ],
             tip={'Unique Subject Identifier': 'From the cronus log'},
-            screen=1
+            screen=screen
         )
 
         return exp_info.OK
