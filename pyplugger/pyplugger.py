@@ -217,6 +217,17 @@ class ConnectedPyPlugger:
         matters is the start of your events."""
         psychopy.parallel.setData(0)
 
+    def draw_photodiode_stimuli(self, color=(1.0, 1.0, 1.0), radius=20, x=None, y=None):
+        # top right corner, because (0,0) is window center
+        if x is None:
+            x = self.window.size[0] / 2 - 30
+
+        if y is None:
+            y = self.window.size[1] / 2 - 30
+
+        psychopy.visual.Circle(self.window, fillColor=color, radius=radius, pos=(x, y),
+                               lineWidth=0, units='pix').draw()
+
     def display_eeg_instructions(self, eeg_instruction_text=None):
         """Displays a window with some generic EEG instructions.
 

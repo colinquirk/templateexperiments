@@ -25,9 +25,12 @@ eeg.display_interactive_switch_screen()  # End in monitoring mode
 
 eeg.start_recording()
 for i in range(5):
+    eeg.draw_photodiode_stimuli()
+    win.flip()
     eeg.start_event(i)
     time.sleep(0.5)
     eeg.end_event()
+    win.flip()
     time.sleep(0.5)
 
 print('Basic functionality tests passed...')
