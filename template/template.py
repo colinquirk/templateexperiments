@@ -325,7 +325,7 @@ class BaseExperiment:
 
     def display_text_screen(
             self, text='', text_color=[0, 0, 0], text_height=36,
-            bg_color=None, wait_for_input=True, **kwargs):
+            bg_color=None, wait_for_input=True, keyList=None, **kwargs):
         """Takes a string as input and draws it centered on the screen.
 
         Allows for simple writing of text to a screen with a background color
@@ -373,7 +373,7 @@ class BaseExperiment:
 
         if wait_for_input:
             psychopy.core.wait(.2)  # Prevents accidental key presses
-            keys = psychopy.event.waitKeys()
+            keys = psychopy.event.waitKeys(keyList=keyList)
             self.experiment_window.flip()
 
         return keys
