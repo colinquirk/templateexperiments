@@ -348,7 +348,7 @@ class ConnectedEyeLinker:
             self.tracker.doDriftCorrect(position[0], position[1], 1, setup)
             self.tracker.applyDriftCorrect()
         except RuntimeError as e:
-            print(e.message)
+            print(e)
 
     def record(self, to_record_func):
         """A python decorator for if what you want to record is contained in a single function.
