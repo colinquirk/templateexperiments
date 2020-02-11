@@ -391,11 +391,14 @@ class ConnectedEyeLinker:
         sample = self.tracker.getNewestSample()
 
         if self.eye == 'LEFT':
-            return sample.getLeftEye().getGaze()
+            return sample.getLeftEye().getGaze() if sample else (None, None)
         elif self.eye == 'RIGHT':
-            return sample.getRightEye().getGaze()
+            return sample.getRightEye().getGaze() if sample else (None, None)
         else:
-            return (sample.getLeftEye().getGaze(), sample.getRightEye().getGaze())
+            if sample:
+                return (sample.getLeftEye().getGaze(), sample.getRightEye().getGaze())
+            else:
+                return ((None, None), (None, None))
 
     @property
     def pupil_size(self):
