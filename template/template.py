@@ -27,9 +27,10 @@ BaseExperiment -- All experiments inherit from BaseExperiment. Provides basic
     docs or help(templateexperiments.BaseExperiment) for everything.
 """
 
+import json
 import os
 import pickle
-import json
+import sys
 
 import psychopy.monitors
 import psychopy.visual
@@ -383,6 +384,7 @@ class BaseExperiment:
         if self.experiment_window:
             self.experiment_window.close()
         print('The experiment has ended.')
+        sys.exit(0)
 
 
 class EyeTrackingEEGExperiment(BaseExperiment):
